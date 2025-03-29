@@ -1,17 +1,24 @@
 import jwt
+import os
 import datetime
 from passlib.context import CryptContext
+from dotenv import load_dotenv
+from fastapi import HTTPException
+from fastapi.security import HTTPBearer
+from sqlalchemy.orm import Session
+from fastapi import HTTPException, Request
+from app.models import User  # 假设你有 User 模型
 
-# 加密演算法
-SECRET_KEY = "your_secret_key"  # 請用環境變數存放
+# 載入環境變數
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")  # 加载 SECRET_KEY 环境变量
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token 過期時間
-ACCESS_TOKEN_EXPIRE_SECONDS = 30  # 設定為 30 秒
+ACCESS_TOKEN_EXPIRE_SECONDS = 300  # Token 過期時間
 
 # 密碼加密設定
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# 加密密碼
+# 密碼哈希
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
@@ -19,33 +26,60 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-# 產生 JWT Token (使用 timezone-aware datetime)
+# 產生 JWT Token
 def create_access_token(data: dict, expires_delta: int = ACCESS_TOKEN_EXPIRE_SECONDS):
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + datetime.timedelta(seconds=expires_delta)
+    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=expires_delta)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+
+    jwt_token = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")  # 確保這裡是 HS256
+
+
+    return jwt_token
 
 # 驗證 JWT Token
 def decode_access_token(token: str):
+    print(f"收到的 Token: {token}")  # 確保這是 JWT 而不是加密過的內容
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload  # 回傳解碼後的資料
+        print(f"解碼後的 Token 資料: {payload}")
+        return payload
     except jwt.ExpiredSignatureError:
-        return None  # Token 過期
+        raise HTTPException(status_code=401, detail={"message": "Token has expired"})
     except jwt.InvalidTokenError:
-        return None  # 無效 Token
+        raise HTTPException(status_code=401, detail={"message": "Invalid token"})
 
-# 用於取得當前用戶
-from fastapi import Depends, HTTPException, Security
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+# 驗證用戶身份
+def authenticate_user(session: Session, email: str, password: str):
+    # 查找数据库中的用户
+    user = session.query(User).filter(User.email == email).first()
+    if user and verify_password(password, user.password):
+        return user
+    return None
 
+# FastAPI 身分驗證
 security = HTTPBearer()
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Security(security)):
-    token = credentials.credentials
-    payload = decode_access_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return payload  # 回傳解碼後的用戶資料
+def validate_token(token: str):
+    """驗證 Token 的有效性"""
+    try:
+       
+        payload = decode_access_token(token)
+        if not payload:
+            raise HTTPException(status_code=401, detail={"message": "Invalid or expired token"})
+        return payload
+    except Exception as e:
+        raise HTTPException(status_code=401, detail={"message": f"Error decoding token: {str(e)}"})
+
+
+def get_current_user(request: Request):
+    authorization: str = request.headers.get("Authorization")
+    if not authorization:
+        raise HTTPException(status_code=401, detail={"message": "Authorization header missing"})
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail={"message": "Invalid token prefix"})
+    
+ 
+    token = authorization.split("Bearer ")[1]
+    
+    return validate_token(token) 
