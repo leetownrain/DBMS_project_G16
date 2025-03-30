@@ -3,3 +3,4 @@ uvicorn
 sqlmodel
 asyncpg
 psycopg2-binary
+httpx
