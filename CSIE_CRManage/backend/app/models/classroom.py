@@ -1,5 +1,9 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.course_time import CourseTime
+    from app.models.booking import Booking
 
 class Classroom(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
