@@ -38,7 +38,7 @@ async def login(user_info: loginCommand):
         else:
             return {"result": False, "message": "Login failed."}
     else:
-        create_user_response = await post_request(User_APIs.POST_CREATE_USER, params={"name":"自動創建（教室管理系統）","email": user_info.email,"password": user_info.email})
+        create_user_response = await post_request(User_APIs.POST_CREATE_USER, json={"id":1,"name":"自動創建（教室管理系統）","email": user_info.email,"password": user_info.email})
         if create_user_response.status_code != 200:
             raise HTTPException(status_code=create_user_response.status_code, detail="External API error.(create user)")
         
