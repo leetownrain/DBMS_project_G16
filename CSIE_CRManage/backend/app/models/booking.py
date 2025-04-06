@@ -23,4 +23,6 @@ class Booking(SQLModel, table=True):
     is_approved: bool = Field(default=False)
 
     classroom: 'Classroom' = Relationship(back_populates='bookings')
+    
+    course_time_id: int = Field(foreign_key='coursetime.id')
     course_time: 'CourseTime' = Relationship(back_populates='bookings')

@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 sqlmodel
-asyncpg
 psycopg2-binary
+dotenv
 selenium
 beautifulsoup4

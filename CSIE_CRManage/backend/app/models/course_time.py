@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from app.models.course_info import CourseInfo
     from app.models.section import Section
     from app.models.booking import Booking
+    from app.models.classroom import Classroom
 
 class DayOfWeek(int, Enum):
     SUNDAY = 0
@@ -22,6 +23,7 @@ class CourseTime(SQLModel, table=True):
     day_of_week: DayOfWeek
     classroom_id: int = Field(foreign_key='classroom.id')
 
+    classroom: 'Classroom' = Relationship(back_populates='courses')
     course_info: 'CourseInfo' = Relationship(back_populates='course_times')
     sections: List['Section'] = Relationship(back_populates='course_time')
     bookings: List['Booking'] = Relationship(back_populates='course_time')
