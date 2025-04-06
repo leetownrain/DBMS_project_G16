@@ -1,7 +1,5 @@
 import httpx
 
-import httpx
-
 async def get_request(url: str, params: dict = None, headers: dict = None, timeout: float = 10.0):
     """
     萬用的非同步 GET 請求函式，可用來發送各種 GET 請求。
