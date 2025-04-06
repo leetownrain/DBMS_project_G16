@@ -1,4 +1,4 @@
-# nfu_classroom_crawler.py
+import os
 import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 def fetch_class_schedules():
-
     index_url = "https://m.nfu.edu.tw/plab/index"
     classrooms = [
         {"year": "113", "seme": "2", "category": "B", "building": "GC,綜三館", "classroom": "BGC0501,BGC0501-基本電學與證照實驗室"},
@@ -26,7 +25,6 @@ def fetch_class_schedules():
     driver = webdriver.Chrome(options=options)
     
     for classroom_data in classrooms:
-        # 取出教室代號
         classroom_code = classroom_data["classroom"].split(",")[0]
         try:
             driver.get(index_url)
@@ -91,7 +89,6 @@ def fetch_class_schedules():
                 print(f"爬取 {classroom_code} 失敗：未找到結果頁面")
                 continue
             
-            # 從標題解析學年、學期與教室代號
             title = nonfocal_div.find("h2").text.strip()
             parts = title.split(" / ")
             title_parts = parts[0].split()
@@ -99,16 +96,14 @@ def fetch_class_schedules():
             semester_val = title_parts[3]
             classroom_code_from_title = parts[1].split(" 使用時間表")[0].split("-")[0]
             
-            # 取得星期標題
             table = soup.find("table", id="table")
             if not table:
                 print(f"爬取 {classroom_code} 失敗：未找到表格")
                 continue
             header_row = table.find("tr")
             header_cells = header_row.find_all("th")
-            days = [cell.text.strip() for cell in header_cells[1:]]  # 第一個欄位為空
+            days = [cell.text.strip() for cell in header_cells[1:]]
             
-            # 逐行解析課程資料（以節次為單位）
             rows = table.find_all("tr")[1:]
             for row in rows:
                 cells = row.find_all("td")
@@ -122,7 +117,6 @@ def fetch_class_schedules():
                         elif len(cell.contents) > 2:
                             professor_name = cell.contents[2].strip() if isinstance(cell.contents[2], str) else ""
                         if course_name:
-                            # 完整資料包含星期與節次
                             full_entry = {
                                 "學年": year_val,
                                 "學期": semester_val,
@@ -132,7 +126,6 @@ def fetch_class_schedules():
                                 "課程": course_name,
                                 "教授": professor_name
                             }
-                            # 簡易資料僅保留學年、學期、教室、課程、教授
                             simple_entry = {
                                 "學年": year_val,
                                 "學期": semester_val,
@@ -149,19 +142,27 @@ def fetch_class_schedules():
 
     driver.quit()
     
+    # 以目前程式所在目錄作為基底，建立儲存 JSON 的資料夾 "course_json"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(base_dir, "course_json")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
     # 寫入完整資料 JSON 檔案
     try:
-        with open("classroom_schedules_full.json", "w", encoding="utf-8") as f_full:
+        full_path = os.path.join(output_dir, "classroom_schedules_full.json")
+        with open(full_path, "w", encoding="utf-8") as f_full:
             json.dump(full_schedules, f_full, ensure_ascii=False, indent=4)
-        print("所有完整課程資訊已儲存至 classroom_schedules_full.json")
+        print(f"所有完整課程資訊已儲存至 {full_path}")
     except Exception as e:
         print(f"儲存完整 JSON 檔案失敗：{e}")
     
     # 寫入簡易資料 JSON 檔案
     try:
-        with open("classroom_schedules_simple.json", "w", encoding="utf-8") as f_simple:
+        simple_path = os.path.join(output_dir, "classroom_schedules_simple.json")
+        with open(simple_path, "w", encoding="utf-8") as f_simple:
             json.dump(simple_schedules, f_simple, ensure_ascii=False, indent=4)
-        print("所有簡易課程資訊已儲存至 classroom_schedules_simple.json")
+        print(f"所有簡易課程資訊已儲存至 {simple_path}")
     except Exception as e:
         print(f"儲存簡易 JSON 檔案失敗：{e}")
     

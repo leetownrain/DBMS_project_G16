@@ -1,31 +1,25 @@
-from typing import Union
-
-from fastapi import FastAPI, Depends
-from sqlmodel import Session, select
-
-from .database import create_db_and_tables, get_session
-
-from app.crawler.integrated_update import update_all_from_crawler
+# backend/app/main.py
+from fastapi import FastAPI
+from app.database import create_db_and_tables
+from app.crawler.update_course_info import update_all_from_crawler
+from app.crawler.update_course_time import update_course_time_from_crawler
 
 app = FastAPI()
 
 @app.on_event("startup")
 def on_startup():
+    # 建立資料庫與資料表（依 models/__init__.py 決定建立哪些表）
     create_db_and_tables()
-
-     # 執行爬蟲抓資料並將結果更新到資料庫
-    update_all_from_crawler()
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "系統運作中"}
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-@app.post("/update-all")
+@app.post("/crawler/update")
 def update_all_endpoint():
+    """
+    手動觸發爬蟲抓取，更新 CourseInfo 與 CourseTime 表的資料。
+    """
     update_all_from_crawler()
-    return {"message": "所有爬蟲資料已存入 CourseInfo 表中"}
+    update_course_time_from_crawler()
+    return {"message": "所有爬蟲資料已更新到 CourseInfo 與 CourseTime 表中"}
