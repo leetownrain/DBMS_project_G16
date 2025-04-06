@@ -3,3 +3,5 @@ uvicorn
 sqlmodel
 asyncpg
 psycopg2-binary
+selenium
+beautifulsoup4
