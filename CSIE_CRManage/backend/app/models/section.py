@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from datetime import time
 
 if TYPE_CHECKING:
@@ -7,8 +7,9 @@ if TYPE_CHECKING:
 
 class Section(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
+    name: str = Field(max_length=10)
     start_period: time
     end_period: time
-    course_time_id: int = Field(foreign_key='coursetime.id')
 
-    course_time: 'CourseTime' = Relationship(back_populates='sections')
+    course_time_id: int = Field(foreign_key='coursetime.id')
+    course_time: "CourseTime" = Relationship(back_populates="sections")
