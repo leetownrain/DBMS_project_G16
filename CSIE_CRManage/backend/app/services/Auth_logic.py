@@ -1,6 +1,8 @@
 from sqlmodel import Session, select
 from fastapi import HTTPException
+
 from app.models import User, RoleEnum
+from app.services.http_logic import get_request
 
 def create_user_in_db(session: Session, email: str) -> User:
     # 以 email 的 @ 前綴作為 username，如果沒有 @ 就預設為 "user"

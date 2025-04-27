@@ -1,15 +1,17 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import SQLModel, Session
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.database import get_session
 
 from app.urls import User_APIs
 
 from app.services.http_logic import get_request, post_request
-from app.services.Auth_logic import create_user_in_db, get_user_role,get_user_is_psd_init
+from app.services.Auth_logic import create_user_in_db, get_user_role, get_user_is_psd_init
+from app.services.token_service import get_current_user
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
-
+security = HTTPBearer()
 class loginCommand(SQLModel):
     email: str
     password: str
@@ -75,3 +77,46 @@ async def login(user_info: loginCommand, session: Session = Depends(get_session)
                 return {"result": False,"message": "No Email. Created. Login failed."}
         else:
             raise HTTPException(status_code=400, detail="Create user failed.")
+        
+@auth_router.get("/verify_token")
+async def verify_token(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    session: Session = Depends(get_session)
+):
+    token = credentials.credentials  # 從 Authorization header 拿 token
+
+    # 🔐 呼叫外部 API 驗證 token 有效性
+    verify_response = await get_request(User_APIs.GET_VERIFY_TOKEN, params={"token": token})
+    if verify_response.status_code != 200:
+        raise HTTPException(status_code=verify_response.status_code, detail="外部 API 錯誤 (verify token)")
+
+    verify_data = verify_response.json()
+
+    if verify_data.get("result") and verify_data.get("email"):
+        email = verify_data["email"]
+        role = get_user_role(session, email)
+        is_init = get_user_is_psd_init(session, email)
+
+        print("驗證成功")
+        print("email:", email)
+        print("role:", role)
+        print("is_init:", is_init)
+
+        if role:
+            return {
+                "result": True,
+                "role": role,
+                "is_psd_init": is_init,
+                "message": "Token 驗證成功"
+            }
+        else:
+            return {
+                "result": False,
+                "message": "使用者資料不完整（角色缺失）"
+            }
+
+    # 外部 API 回傳驗證失敗
+    return {
+        "result": False,
+        "message": "Token 驗證失敗"
+    }
