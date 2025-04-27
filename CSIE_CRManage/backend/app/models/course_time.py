@@ -19,11 +19,10 @@ class DayOfWeek(int, Enum):
 
 class CourseTime(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    course_info_id: int = Field(foreign_key='courseinfo.id')
     day_of_week: DayOfWeek
     classroom_id: int = Field(foreign_key='classroom.id')
+    course_info_id: int = Field(foreign_key='courseinfo.id')
 
-    classroom: 'Classroom' = Relationship(back_populates='courses')
     course_info: 'CourseInfo' = Relationship(back_populates='course_times')
     sections: List['Section'] = Relationship(back_populates='course_time')
     bookings: List['Booking'] = Relationship(back_populates='course_time')
