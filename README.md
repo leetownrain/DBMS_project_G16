@@ -29,3 +29,6 @@ pip install fastapi uvicorn sqlmodel asyncpg psycopg2 fastapi-users passlib bcry
 * 李鎮宇 41143216 四資工三乙
 * 林致均 41143222 四資工三乙
 * 陳亮祐 41143235 四資工三乙
+
+# 作業一
+* https://www.canva.com/design/DAGj9WScB2c/AUaKssZWl7kdMSSYxcPwuw/edit?utm_content=DAGj9WScB2c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
