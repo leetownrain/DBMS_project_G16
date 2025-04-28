@@ -20,7 +20,7 @@ class DayOfWeek(int, Enum):
 class CourseTime(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     day_of_week: DayOfWeek
-    classroom_id: int = Field(foreign_key='classroom.id')
+    classroom_id: str = Field(foreign_key='classroom.id')
     course_info_id: int = Field(foreign_key='courseinfo.id')
 
     course_info: 'CourseInfo' = Relationship(back_populates='course_times')

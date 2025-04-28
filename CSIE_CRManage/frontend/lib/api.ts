@@ -1,7 +1,7 @@
 // src/lib/api.ts
 
 // ✅ 主機 API 網址，可接環境變數
-export const CSIE_MANAGE_URL = "http://120.113.100.116:8000"
+export const CSIE_MANAGE_URL = "http://127.0.0.1:8000"
 export const API_BASE = `${CSIE_MANAGE_URL}/api`
 
 // ✅ API 路徑集中管理
