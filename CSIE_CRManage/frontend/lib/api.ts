@@ -1,7 +1,10 @@
 // src/lib/api.ts
 
+import { Section } from "lucide-react"
+
 // ✅ 主機 API 網址，可接環境變數
-export const CSIE_MANAGE_URL = "http://127.0.0.1:8000"
+// export const CSIE_MANAGE_URL = "http://127.0.0.1:8000"
+export const CSIE_MANAGE_URL = "http://172.20.10.5:8000"
 export const API_BASE = `${CSIE_MANAGE_URL}/api`
 
 // ✅ API 路徑集中管理
@@ -13,8 +16,8 @@ export const API = {
         delete: (id: string) => `${API_BASE}/classrooms/${id}`,
     },
 
-    timePeriod: {
-        list: `${API_BASE}/time-periods`,
+    section: {
+        get_all_info: `${API_BASE}/sections/section_info`,
         create: `${API_BASE}/time-periods`,
         update: (id: string) => `${API_BASE}/time-periods/${id}`,
         delete: (id: string) => `${API_BASE}/time-periods/${id}`,

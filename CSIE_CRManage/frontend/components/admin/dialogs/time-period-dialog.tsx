@@ -189,7 +189,8 @@ export function TimePeriodDialog({ open, onOpenChange, timePeriod, mode }: TimeP
                   <Button
                     key={day}
                     type="button"
-                    variant={formData.daysAvailable.includes(day) ? "default" : "outline"}
+                    // variant={formData.daysAvailable.includes(day) ? "default" : "outline"}
+                    variant="default"
                     size="sm"
                     onClick={() => handleDayToggle(day)}
                   >
