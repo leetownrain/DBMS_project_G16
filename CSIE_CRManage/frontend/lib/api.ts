@@ -3,8 +3,8 @@
 import { Section } from "lucide-react"
 
 // ✅ 主機 API 網址，可接環境變數
-// export const CSIE_MANAGE_URL = "http://127.0.0.1:8000"
-export const CSIE_MANAGE_URL = "http://172.20.10.5:8000"
+export const CSIE_MANAGE_URL = "http://127.0.0.1:8000"
+// export const CSIE_MANAGE_URL = "http://172.20.10.5:8000"
 export const API_BASE = `${CSIE_MANAGE_URL}/api`
 
 // ✅ API 路徑集中管理

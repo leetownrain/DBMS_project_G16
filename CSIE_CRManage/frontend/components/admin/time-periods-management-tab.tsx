@@ -4,11 +4,12 @@ import { useState, useEffect } from "react"
 import { Clock, Edit, Trash, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useAdmin } from "@/contexts/admin-context"
+// import { useAdmin } from "@/contexts/admin-context"
 import { useMobile } from "@/hooks/use-mobile"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { TimePeriodDialog } from "@/components/admin/dialogs/time-period-dialog"
 import { API } from "@/lib/api"
+
 interface Section {
   id: number
   name: string
@@ -16,10 +17,9 @@ interface Section {
   end_time: string
 }
 
-
 export function TimePeriodsManagementTab() {
   const [sections, setSections] = useState<Section[]>([])
-  const { timePeriods, deleteTimePeriod } = useAdmin()
+  // const { timePeriods, deleteTimePeriod } = useAdmin()
   const isMobile = useMobile()
   const [isAddTimePeriodOpen, setIsAddTimePeriodOpen] = useState(false)
   const [isEditTimePeriodOpen, setIsEditTimePeriodOpen] = useState(false)
@@ -27,9 +27,20 @@ export function TimePeriodsManagementTab() {
 
   const fetchSections = async () => {
     try {
-      const res = await fetch(API.section.get_all_info)
+      const res = await fetch(API.section.get_all_info, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      })
       if (!res.ok) throw new Error("無法取得時段資料")
       const data = await res.json()
+      data.map((item: Section)=>{
+        item.start_time= item.start_time.split(":").slice(0, 2).join(":")
+        item.end_time= item.end_time.split(":").slice(0, 2).join(":")
+      })
+      console.log("時段資料：", data)
       setSections(data)
     } catch (error) {
       console.error("載入時段失敗：", error)
@@ -44,14 +55,14 @@ export function TimePeriodsManagementTab() {
     setIsAddTimePeriodOpen(true)
   }
 
-  const handleEditTimePeriod = (timePeriod) => {
-    setCurrentTimePeriod(timePeriod)
+  const handleEditTimePeriod = (section: Section) => {
+    setCurrentTimePeriod(section)
     setIsEditTimePeriodOpen(true)
   }
 
-  const handleDeleteTimePeriod = (id) => {
+  const handleDeleteTimePeriod = (id: number) => {
     if (confirm("確定要刪除此時段嗎？")) {
-      deleteTimePeriod(id)
+      // deleteTimePeriod(id)
     }
   }
 
@@ -68,7 +79,7 @@ export function TimePeriodsManagementTab() {
           </div>
           <Accordion type="single" collapsible className="w-full">
             {sections.map((period) => (
-              <AccordionItem key={period.id} value={period.id}>
+              <AccordionItem key={period.id} value={period.id.toString()}>
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center justify-between w-full pr-4">
                     <div className="font-medium">{period.name}</div>
@@ -139,8 +150,8 @@ export function TimePeriodsManagementTab() {
               <div>ID</div>
               <div>名稱</div>
               <div>時間</div>
-              <div>可用日</div>
-              <div>狀態</div>
+              {/* <div>可用日</div> */}
+              {/* <div>狀態</div> */}
               <div>操作</div>
             </div>
 
@@ -152,11 +163,10 @@ export function TimePeriodsManagementTab() {
                   <div className="text-sm">
                     {period.start_time} - {period.end_time}
                   </div>
-                  <div className="text-sm">
-                    {/* <span className="inline-block max-w-[200px] truncate">{period.daysAvailable.join(", ")}</span> */}
-                    <span className="inline-block max-w-[200px] truncate">AA</span>
-                  </div>
-                  <div>
+                  {/* <div className="text-sm">
+                    <span className="inline-block max-w-[200px] truncate">{period.daysAvailable.join(", ")}</span>
+                  </div> */}
+                  {/* <div>
                     {true ? (
                       <Badge className="bg-green-500">啟用</Badge>
                     ) : (
@@ -164,7 +174,7 @@ export function TimePeriodsManagementTab() {
                         停用
                       </Badge>
                     )}
-                  </div>
+                  </div> */}
                   <div className="flex gap-2">
                     <Button variant="ghost" size="sm" onClick={() => handleEditTimePeriod(period)}>
                       <Edit className="h-4 w-4" />

@@ -4,8 +4,6 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
   DialogContent,
@@ -14,206 +12,154 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useAdmin } from "@/contexts/admin-context"
-import type { TimePeriod } from "@/contexts/admin-context"
+import { API } from "@/lib/api"
+
+interface Section {
+  id: number
+  name: string
+  start_time: string
+  end_time: string
+}
 
 interface TimePeriodDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  timePeriod: TimePeriod | null
+  timePeriod: Section | null
   mode: "add" | "edit"
 }
 
-export function TimePeriodDialog({ open, onOpenChange, timePeriod, mode }: TimePeriodDialogProps) {
-  const { addTimePeriod, updateTimePeriod } = useAdmin()
-  const [formData, setFormData] = useState({
+export function TimePeriodDialog({
+  open,
+  onOpenChange,
+  timePeriod,
+  mode,
+}: TimePeriodDialogProps) {
+  const [formState, setFormState] = useState({
     id: "",
     name: "",
-    startTime: "",
-    endTime: "",
-    isActive: true,
-    daysAvailable: ["週一", "週二", "週三", "週四", "週五"],
-    description: "",
+    start_time: "",
+    end_time: "",
   })
 
   useEffect(() => {
     if (mode === "edit" && timePeriod) {
-      setFormData({
-        id: timePeriod.id,
+      setFormState({
+        id: timePeriod.id.toString(),
         name: timePeriod.name,
-        startTime: timePeriod.startTime,
-        endTime: timePeriod.endTime,
-        isActive: timePeriod.isActive,
-        daysAvailable: timePeriod.daysAvailable,
-        description: timePeriod.description,
+        start_time: timePeriod.start_time,
+        end_time: timePeriod.end_time,
       })
-    } else if (mode === "add") {
-      setFormData({
+    } else {
+      setFormState({
         id: "",
         name: "",
-        startTime: "",
-        endTime: "",
-        isActive: true,
-        daysAvailable: ["週一", "週二", "週三", "週四", "週五"],
-        description: "",
+        start_time: "",
+        end_time: "",
       })
     }
-  }, [timePeriod, mode, open])
+  }, [mode, timePeriod, open])
 
-  const handleFormChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormState((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleActiveChange = (checked) => {
-    setFormData((prev) => ({
-      ...prev,
-      isActive: checked,
-    }))
-  }
-
-  const handleDayToggle = (day) => {
-    setFormData((prev) => {
-      const currentDays = [...prev.daysAvailable]
-      if (currentDays.includes(day)) {
-        return {
-          ...prev,
-          daysAvailable: currentDays.filter((d) => d !== day),
-        }
-      } else {
-        return {
-          ...prev,
-          daysAvailable: [...currentDays, day],
-        }
-      }
-    })
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (mode === "edit") {
-      updateTimePeriod(timePeriod!.id, formData)
-    } else {
-      addTimePeriod(formData)
+    const payload = {
+      name: formState.name,
+      start_time: formState.start_time,
+      end_time: formState.end_time,
     }
 
-    onOpenChange(false)
+    try {
+      if (mode === "edit" && timePeriod) {
+        await fetch(`${API.section.update_info}/${timePeriod.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+      } else {
+        await fetch(API.section.create_new_data, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+      }
+
+      onOpenChange(false)
+    } catch (error) {
+      console.error("儲存失敗：", error)
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === "add" ? "添加新課節時段" : "編輯課節時段"}</DialogTitle>
+          <DialogTitle>{mode === "add" ? "新增課節時段" : "編輯課節時段"}</DialogTitle>
           <DialogDescription>
-            {mode === "add" ? "填寫以下表單以添加新的課節或休息時段。" : "修改課節或休息時段資訊。"}
+            {mode === "add" ? "請填寫以下資料來新增課節時段。" : "請修改課節時段資料。"}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-id" className="text-right">
-                時段ID
-              </Label>
+              <Label htmlFor="id" className="text-right">時段 ID</Label>
               <Input
-                id="time-id"
+                id="id"
                 name="id"
-                placeholder="period-15"
-                value={formData.id}
-                onChange={handleFormChange}
-                className="col-span-3"
+                value={formState.id}
+                onChange={handleChange}
+                placeholder="period-01"
                 required
                 disabled={mode === "edit"}
+                className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-name" className="text-right">
-                名稱
-              </Label>
+              <Label htmlFor="name" className="text-right">名稱</Label>
               <Input
-                id="time-name"
+                id="name"
                 name="name"
-                placeholder="第15節"
-                value={formData.name}
-                onChange={handleFormChange}
-                className="col-span-3"
+                value={formState.name}
+                onChange={handleChange}
+                placeholder="第1節"
                 required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-description" className="text-right">
-                描述
-              </Label>
-              <Textarea
-                id="time-description"
-                name="description"
-                placeholder="時段描述"
-                value={formData.description}
-                onChange={handleFormChange}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-start" className="text-right">
-                開始時間
-              </Label>
+              <Label htmlFor="start_time" className="text-right">開始時間</Label>
               <Input
-                id="time-start"
-                name="startTime"
+                id="start_time"
+                name="start_time"
                 type="time"
-                value={formData.startTime}
-                onChange={handleFormChange}
-                className="col-span-3"
+                value={formState.start_time}
+                onChange={handleChange}
                 required
+                className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-end" className="text-right">
-                結束時間
-              </Label>
+              <Label htmlFor="end_time" className="text-right">結束時間</Label>
               <Input
-                id="time-end"
-                name="endTime"
+                id="end_time"
+                name="end_time"
                 type="time"
-                value={formData.endTime}
-                onChange={handleFormChange}
-                className="col-span-3"
+                value={formState.end_time}
+                onChange={handleChange}
                 required
+                className="col-span-3"
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">可用日</Label>
-              <div className="col-span-3 flex flex-wrap gap-2">
-                {["週一", "週二", "週三", "週四", "週五", "週六", "週日"].map((day) => (
-                  <Button
-                    key={day}
-                    type="button"
-                    // variant={formData.daysAvailable.includes(day) ? "default" : "outline"}
-                    variant="default"
-                    size="sm"
-                    onClick={() => handleDayToggle(day)}
-                  >
-                    {day}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time-active" className="text-right">
-                啟用狀態
-              </Label>
-              <div className="flex items-center space-x-2 col-span-3">
-                <Switch id="time-active" checked={formData.isActive} onCheckedChange={handleActiveChange} />
-                <Label htmlFor="time-active">{formData.isActive ? "啟用" : "停用"}</Label>
-              </div>
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               取消
             </Button>
-            <Button type="submit">{mode === "add" ? "添加時段" : "更新時段"}</Button>
+            <Button type="submit">{mode === "add" ? "新增時段" : "儲存修改"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
