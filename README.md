@@ -32,3 +32,5 @@ pip install fastapi uvicorn sqlmodel asyncpg psycopg2 fastapi-users passlib bcry
 
 # 作業一
 * https://www.canva.com/design/DAGj9WScB2c/AUaKssZWl7kdMSSYxcPwuw/edit?utm_content=DAGj9WScB2c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+# 作業二
+* https://www.canva.com/design/DAGmr2V3CzA/0mnUy8ykieZKFDUyV-0oBQ/edit?utm_content=DAGmr2V3CzA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
