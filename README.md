@@ -74,7 +74,7 @@
 
 ```sql
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user'))
@@ -94,7 +94,7 @@ CREATE TABLE users (
 
 ```sql
 CREATE TABLE classrooms (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
 );
@@ -112,10 +112,10 @@ CREATE TABLE classrooms (
 
 ```sql
 CREATE TABLE courses (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     teacher VARCHAR(100) NOT NULL,
-    academic_year VARCHAR(20) NOT NULL CHECK (academic_year ~ '^[0-9]{4}$'),
+    academic_year VARCHAR(20) NOT NULL,
     semester VARCHAR(10) NOT NULL CHECK (semester IN ('上', '下'))
 );
 ```
@@ -134,7 +134,7 @@ CREATE TABLE courses (
 
 ```sql
 CREATE TABLE time_periods (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     label VARCHAR(50) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
@@ -155,17 +155,18 @@ CREATE TABLE time_periods (
 
 ```sql
 CREATE TABLE reservations (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     date DATE NOT NULL,
     reason TEXT NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),
     unit VARCHAR(100) NOT NULL,
     teacher VARCHAR(100) NOT NULL,
-    applicant_id INTEGER NOT NULL,
+    applicant_id INT NOT NULL,
     applicant_name VARCHAR(100) NOT NULL,
-    applicant_email VARCHAR(100) NOT NULL CHECK (applicant_email LIKE '%@%'),
+    applicant_email VARCHAR(100) NOT NULL,
     applicant_phone VARCHAR(50) NOT NULL,
-    classroom_id INTEGER NOT NULL REFERENCES classrooms(id)
+    classroom_id INT NOT NULL,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id)
 );
 ```
 
@@ -194,10 +195,13 @@ CREATE TABLE reservations (
 
 ```sql
 CREATE TABLE course_periods (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-    time_period_id INTEGER NOT NULL REFERENCES time_periods(id) ON DELETE CASCADE,
-    classroom_id INTEGER REFERENCES classrooms(id) ON DELETE SET NULL
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    time_period_id INT NOT NULL,
+    classroom_id INT,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (time_period_id) REFERENCES time_periods(id) ON DELETE CASCADE,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE SET NULL
 );
 ```
 
@@ -219,9 +223,11 @@ CREATE TABLE course_periods (
 
 ```sql
 CREATE TABLE reservations_periods (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
-    time_period_id INTEGER NOT NULL REFERENCES time_periods(id) ON DELETE CASCADE
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    reservation_id INT NOT NULL,
+    time_period_id INT NOT NULL,
+    FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+    FOREIGN KEY (time_period_id) REFERENCES time_periods(id) ON DELETE CASCADE
 );
 ```
 
@@ -245,3 +251,73 @@ CREATE TABLE reservations_periods (
 - 一門 **course**（課程）可對應多個 **time_period**（時段）→ 多對多關係，透過 `course_periods`
 - 一筆 **reservation** 可對應多個 **time_period** → 多對多關係，透過 `reservations_periods`
 - **course_periods** 額外指定該時段使用的 **classroom**（教室） → 多對一關係
+
+---
+
+# 📊 教室管理系統 SQL 查詢需求說明
+
+本文件整理了教室管理系統（G16）常見查詢需求與對應的 SQL 語法，適用於 MariaDB。
+
+
+## 1️⃣ 查詢教室有哪些
+
+```sql
+SELECT id, name, is_active
+FROM classrooms;
+```
+
+說明：列出所有教室名稱與啟用狀態。
+
+![example](Picture/one.png)
+
+## 2️⃣ 查詢 113-1 有哪些課程
+
+```sql
+SELECT id, name, teacher
+FROM courses
+WHERE academic_year = '113' AND semester = '1';
+```
+
+如果學期欄位使用「上、下」文字，請改為：
+
+```sql
+SELECT id, name, teacher
+FROM courses
+WHERE academic_year = '113' AND semester = '上';
+```
+
+![example](Picture/two.png)
+
+## 3️⃣ 查詢 113-1 含「程式」的課程
+
+```sql
+SELECT id, name, teacher
+FROM courses
+WHERE academic_year = '113'
+  AND semester = '上'
+  AND name LIKE '%程式%';
+```
+
+說明：篩選學年度為 113、學期為「上」，且課程名稱包含「程式」的課程。
+
+![example](Picture/three.png)
+
+## 4️⃣ 查詢 113 上學期程式課在那些時段上課
+
+```sql
+SELECT 
+    c.name AS 課程名稱,
+    tp.label AS 時段標籤,
+    tp.start_time AS 開始時間,
+    tp.end_time AS 結束時間
+FROM courses c
+JOIN course_periods cp ON c.id = cp.course_id
+JOIN time_periods tp ON cp.time_period_id = tp.id
+WHERE c.academic_year = '113'
+  AND c.semester = '上'
+  AND c.name LIKE '%程式%';
+```
+
+說明：從 `courses`、`course_periods` 和 `time_periods` 表連接查出所有 113-上含「程式」課程的時段安排。
+
+![example](Picture/four.png)
