@@ -54,7 +54,7 @@
 
 ## 📋 教室資料庫設計圖（ERD）
 
-![教室管理系統 ER 圖](Picture/full_erd.png)
+![教室管理系統 ER 圖](Picture/erd.png)
 
 
 ---
