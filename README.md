@@ -80,7 +80,7 @@
 
 ### 🔷 一、實體資料表（Entities）
 
-### 1. `users` – 使用者資料表
+#### 1. `users` – 使用者資料表
 
 ```sql
 CREATE TABLE users (
