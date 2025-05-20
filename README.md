@@ -73,7 +73,7 @@
 ### 1. `users` – 使用者資料表
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE users (1
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
