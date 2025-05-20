@@ -1,4 +1,4 @@
-# 教室管理系統（G16）
+ # 教室管理系統（G16）
 
 ## 🧩 系統簡介
 
@@ -80,7 +80,7 @@
 
 ### 🔷 一、實體資料表（Entities）
 
-#### 1. `users` – 使用者資料表
+### 1. `users` – 使用者資料表
 
 ```sql
 CREATE TABLE users (
@@ -100,7 +100,7 @@ CREATE TABLE users (
 
 ---
 
-#### 2. `classrooms` – 教室資料表
+### 2. `classrooms` – 教室資料表
 
 ```sql
 CREATE TABLE classrooms (
@@ -118,7 +118,7 @@ CREATE TABLE classrooms (
 
 ---
 
-#### 3. `courses` – 課程資料表
+### 3. `courses` – 課程資料表
 
 ```sql
 CREATE TABLE courses (
@@ -140,7 +140,7 @@ CREATE TABLE courses (
 
 ---
 
-#### 4. `time_periods` – 時段資料表
+### 4. `time_periods` – 時段資料表
 
 ```sql
 CREATE TABLE time_periods (
@@ -161,7 +161,7 @@ CREATE TABLE time_periods (
 
 ---
 
-#### 5. `reservations` – 教室借用申請表
+### 5. `reservations` – 教室借用申請表
 
 ```sql
 CREATE TABLE reservations (
@@ -201,7 +201,7 @@ CREATE TABLE reservations (
 
 ### 🔶 二、關係資料表（Relationships）
 
-#### 1. `course_periods` – 課程 × 時段 × 教室 的中介表
+### 1. `course_periods` – 課程 × 時段 × 教室 的中介表
 
 ```sql
 CREATE TABLE course_periods (
@@ -229,7 +229,7 @@ CREATE TABLE course_periods (
 
 ---
 
-#### 2. `reservations_periods` – 借用申請 × 時段 的中介表
+### 2. `reservations_periods` – 借用申請 × 時段 的中介表
 
 ```sql
 CREATE TABLE reservations_periods (
@@ -253,7 +253,7 @@ CREATE TABLE reservations_periods (
 
 ---
 
-### 📌 關係整理與解釋
+## 📌 關係整理與解釋
 
 ![教室管理系統 ER 圖](Picture/rela_erd.png)
 
