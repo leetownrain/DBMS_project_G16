@@ -264,12 +264,12 @@ CREATE TABLE reservations_periods (
 
 ---
 
-# 📊 教室管理系統 SQL 查詢需求說明
+## 📊 教室管理系統 SQL 查詢需求說明
 
 本文件整理了教室管理系統（G16）常見查詢需求與對應的 SQL 語法，適用於 MariaDB。
 
 
-## 1️⃣ 查詢教室有哪些
+### 1️⃣ 查詢教室有哪些
 
 ```sql
 SELECT id, name, is_active
@@ -280,7 +280,7 @@ FROM classrooms;
 
 ![example](Picture/one.png)
 
-## 2️⃣ 查詢 113-1 有哪些課程
+### 2️⃣ 查詢 113-1 有哪些課程
 
 ```sql
 SELECT id, name, teacher
@@ -298,7 +298,7 @@ WHERE academic_year = '113' AND semester = '上';
 
 ![example](Picture/two.png)
 
-## 3️⃣ 查詢 113-1 含「程式」的課程
+### 3️⃣ 查詢 113-1 含「程式」的課程
 
 ```sql
 SELECT id, name, teacher
@@ -312,7 +312,7 @@ WHERE academic_year = '113'
 
 ![example](Picture/three.png)
 
-## 4️⃣ 查詢 113 上學期程式課在那些時段上課
+### 4️⃣ 查詢 113 上學期程式課在那些時段上課
 
 ```sql
 SELECT 
