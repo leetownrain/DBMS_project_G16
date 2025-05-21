@@ -100,7 +100,7 @@ CREATE TABLE users (
 
 **格式說明：**
 - 姓名: "中文"
-- 電子郵件格式: "虎科學號"@nfu.edu.tw
+- 電子郵件: "虎科學號"@nfu.edu.tw
 
 ---
 
@@ -219,12 +219,12 @@ CREATE TABLE course_periods (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
-|----------|--------------|----------|--------------|
-| `id`            | INTEGER | 編號 | 主鍵，自動產生 |
-| `course_id`     | INTEGER | 課程 ID | NOT NULL, 外鍵 |
-| `time_period_id`| INTEGER | 時段 ID | NOT NULL, 外鍵 |
-| `classroom_id`  | INTEGER | 教室 ID | 可為空, 外鍵 |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|--------------|----------|---------|----------|
+| `id`            | INTEGER | 編號    | 否 | 主鍵，自動產生 |
+| `course_id`     | INTEGER | 課程 ID | 否 | NOT NULL, 外鍵 |
+| `time_period_id`| INTEGER | 時段 ID | 否 | NOT NULL, 外鍵 |
+| `classroom_id`  | INTEGER | 教室 ID | 否 | 可為空, 外鍵 |
 
 **外鍵說明：**
 - `course_id` → `courses(id)`  
@@ -245,11 +245,11 @@ CREATE TABLE reservations_periods (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
-|----------|--------------|----------|--------------|
-| `id`              | INTEGER | 編號 | 主鍵，自動產生 |
-| `reservation_id`  | INTEGER | 借用申請 ID | NOT NULL, 外鍵 |
-| `time_period_id`  | INTEGER | 時段 ID | NOT NULL, 外鍵 |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|--------------|----------|-----------|--------------|
+| `id`              | int | 編號        | 否 | 主鍵，自動產生 |
+| `reservation_id`  | int | 借用申請 ID | 否 | NOT NULL, 外鍵 |
+| `time_period_id`  | int | 時段 ID     | 否 | NOT NULL, 外鍵 |
 
 **外鍵說明：**
 - `reservation_id` → `reservations(id)`  
