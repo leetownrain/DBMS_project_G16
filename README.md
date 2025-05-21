@@ -99,7 +99,7 @@ CREATE TABLE users (
 | `role`   | varchar | 使用者角色 | 否 | NOT NULL, 僅限 'admin' 或 'user' |
 
 
--電子郵件格式:"學號"@nfu.edu.tw
+-**電子郵件格式:"學號"@nfu.edu.tw
 
 ---
 
