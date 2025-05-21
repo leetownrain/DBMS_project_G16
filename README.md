@@ -134,13 +134,13 @@ CREATE TABLE courses (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
-|----------|-------------|----------|--------------|
-| `id`            | INTEGER       | 課程編號 | 主鍵，自動產生 |
-| `name`          | VARCHAR(100)  | 課程名稱 | NOT NULL |
-| `teacher`       | VARCHAR(100)  | 授課教師姓名 | NOT NULL |
-| `academic_year` | VARCHAR(20)   | 學年度 | NOT NULL, 格式為 4 位數 |
-| `semester`      | VARCHAR(10)   | 學期 | NOT NULL, 僅限 '上' 或 '下' |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|-------------|----------|--------------|--------------|
+| `id`            | int       | 課程編號     | 否 | 主鍵，自動產生 |
+| `name`          | varchar   | 課程名稱     | 否 | NOT NULL |
+| `teacher`       | varchar   | 授課教師姓名 | 否 | NOT NULL |
+| `academic_year` | varchar   | 學年度       | 否 | NOT NULL, 格式為 4 位數 |
+| `semester`      | varchar   | 學期         | 否 | NOT NULL, 僅限 '上' 或 '下' |
 
 ---
 
@@ -156,12 +156,12 @@ CREATE TABLE time_periods (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
-|----------|-------------|----------|--------------|
-| `id`         | INTEGER      | 時段編號 | 主鍵，自動產生 |
-| `label`      | VARCHAR(50)  | 時段標籤 | NOT NULL |
-| `start_time` | TIME         | 開始時間 | NOT NULL |
-| `end_time`   | TIME         | 結束時間 | NOT NULL，必須晚於開始時間 |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|-------------|----------|--------|--------------|
+| `id`         | int      | 時段編號 | 否 | 主鍵，自動產生 |
+| `label`      | varchar  | 時段標籤 | 否 | NOT NULL |
+| `start_time` | time     | 開始時間 | 否 | NOT NULL |
+| `end_time`   | time     | 結束時間 | 否 | NOT NULL，必須晚於開始時間 |
 
 ---
 
@@ -184,19 +184,19 @@ CREATE TABLE reservations (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
-|----------|--------------|----------|--------------|
-| `id`              | INTEGER       | 借用紀錄編號 | 主鍵，自動產生 |
-| `date`            | DATE          | 借用日期 | NOT NULL |
-| `reason`          | TEXT          | 借用原因 | NOT NULL |
-| `status`          | VARCHAR(50)   | 借用狀態 | NOT NULL, 限定值 |
-| `unit`            | VARCHAR(100)  | 申請單位 | NOT NULL |
-| `teacher`         | VARCHAR(100)  | 指導老師 | NOT NULL |
-| `applicant_id`    | INTEGER       | 申請人 ID | NOT NULL |
-| `applicant_name`  | VARCHAR(100)  | 申請人姓名 | NOT NULL |
-| `applicant_email` | VARCHAR(100)  | 申請人信箱 | NOT NULL, Email 格式 |
-| `applicant_phone` | VARCHAR(50)   | 申請人電話 | NOT NULL |
-| `classroom_id`    | INTEGER       | 教室 ID | 外鍵 |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|--------------|----------|--------------|--------------|
+| `id`              | int           | 否 | 借用紀錄編號 | 主鍵，自動產生 |
+| `date`            | date          | 否 | 借用日期 | NOT NULL |
+| `reason`          | text          | 否 | 借用原因 | NOT NULL |
+| `status`          | varchar       | 否 | 借用狀態 | NOT NULL, 限定值 |
+| `unit`            | varchar       | 否 | 申請單位 | NOT NULL |
+| `teacher`         | varchar       | 否 | 指導老師 | NOT NULL |
+| `applicant_id`    | int           | 否 | 申請人 ID | NOT NULL |
+| `applicant_name`  | varchar       | 否 | 申請人姓名 | NOT NULL |
+| `applicant_email` | varchar       | 否 | 申請人信箱 | NOT NULL, Email 格式 |
+| `applicant_phone` | varchar       | 否 | 申請人電話 | NOT NULL |
+| `classroom_id`    | int           | 否 | 教室 ID | 外鍵 |
 
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
