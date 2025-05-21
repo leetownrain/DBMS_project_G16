@@ -91,12 +91,12 @@ CREATE TABLE users (
 );
 ```
 
-| 欄位名稱 | 中文說明 | 是否為空 | 完整性限制 |
+| 欄位名稱 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|-------------|----------|--------------|
-| `id`     | 使用者編號 | | 主鍵，自動產生 |
-| `name`   | 使用者姓名 | | NOT NULL |
-| `email`  | 電子郵件 | | NOT NULL, UNIQUE |
-| `role`   | 使用者角色 | | NOT NULL, 僅限 'admin' 或 'user' |
+| `id`     | 使用者編號 | 否 | 主鍵，自動產生 |
+| `name`   | 使用者姓名 | 否 | NOT NULL |
+| `email`  | 電子郵件 | 否 | NOT NULL, UNIQUE |
+| `role`   | 使用者角色 | 否 | NOT NULL, 僅限 'admin' 或 'user' |
 
 ---
 
