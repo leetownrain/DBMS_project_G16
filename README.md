@@ -1,4 +1,4 @@
- # 教室管理系統（G16）
+# 教室管理系統（G16）
  
 ## 🧩 系統簡介
 
@@ -98,8 +98,8 @@ CREATE TABLE users (
 | `email`  | varchar | 電子郵件 | 否 | NOT NULL, UNIQUE |
 | `role`   | varchar | 使用者角色 | 否 | NOT NULL, 僅限 'admin' 或 'user' |
 
-
--**電子郵件格式:"學號"@nfu.edu.tw
+- ** 格式說明 **
+電子郵件格式:"學號"@nfu.edu.tw
 
 ---
 
