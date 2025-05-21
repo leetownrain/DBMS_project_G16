@@ -98,9 +98,9 @@ CREATE TABLE users (
 | `email`  | varchar | 電子郵件   | 否 | NOT NULL, UNIQUE |
 | `role`   | varchar | 使用者角色 | 否 | NOT NULL, 僅限 'admin' 或 'user' |
 
-- 格式說明
-  - 姓名須為"中文" 
-  - 電子郵件格式:"虎科學號"@nfu.edu.tw
+**格式說明：**
+- 姓名: "中文"
+- 電子郵件格式: "虎科學號"@nfu.edu.tw
 
 ---
 
