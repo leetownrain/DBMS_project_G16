@@ -100,7 +100,7 @@ CREATE TABLE users (
 
 - 格式說明
   - 姓名須為"中文" 
-  - 電子郵件格式:"學號"@nfu.edu.tw
+  - 電子郵件格式:"虎科學號"@nfu.edu.tw
 
 ---
 
@@ -114,11 +114,11 @@ CREATE TABLE classrooms (
 );
 ```
 
-| 欄位名稱 | 資料型別 | 中文說明 | 完整性限制 |
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|-------------|----------|--------------|
-| `id`         | INTEGER      | 教室編號 | 主鍵，自動產生 |
-| `name`       | VARCHAR(100) | 教室名稱 | NOT NULL |
-| `is_active`  | BOOLEAN      | 是否啟用 | 預設為 TRUE |
+| `id`         | int | 教室編號 | 否 | 主鍵，自動產生 |
+| `name`       | varchar | 教室名稱 | 否 | NOT NULL |
+| `is_active`  | boolean | 是否啟用 | 否 | 預設為 TRUE |
 
 ---
 
