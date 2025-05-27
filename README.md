@@ -99,8 +99,8 @@ CREATE TABLE users (
 | `role`   | varchar | 使用者角色 | 否 | NOT NULL, 僅限 'admin' 或 'user' |
 
 **格式說明：**
-- 姓名: "中文"
-- 電子郵件: "虎科學號"@nfu.edu.tw
+- 姓名: 須為"中文"名字，如:陳大餅、張中筒。
+- 電子郵件: "虎科學號"@nfu.edu.tw，如:41143235@nfu.edu.tw。
 
 ---
 
@@ -120,6 +120,9 @@ CREATE TABLE classrooms (
 | `name`       | varchar | 教室名稱 | 否 | NOT NULL |
 | `is_active`  | boolean | 是否啟用 | 否 | 預設為 TRUE |
 
+**格式說明：**
+- 教室編號: 由"三個字母+四位數數字"組成，如:BGC0513(生物資訊實驗室)、BRA0102(人工智慧創新實驗室)。
+- 教室名稱: 須為"中文"教室名稱，如:多功能教學實驗室(BGC0614)、人工智慧創新實驗室(BRA0102)。
 ---
 
 ### 3. `courses` – 課程資料表
@@ -142,6 +145,12 @@ CREATE TABLE courses (
 | `academic_year` | varchar   | 學年度       | 否 | NOT NULL, 格式為 4 位數 |
 | `semester`      | varchar   | 學期         | 否 | NOT NULL, 僅限 '上' 或 '下' |
 
+**格式說明：**
+- 課程編號: 由"四位數字"所組成，如:1929(數位系統導論)、1933(科技文件閱讀)。
+- 課程名稱: 須為"中文"課程名稱，如:數位系統導論、科技文件閱讀。
+- 授課教師姓名: 須為"中文"名字，如:鄭錦聰教授、江季翰教授。
+- 學年度: 須符合實際"民國年"，如:113、114。
+- 學期: 僅接受以下格式，如:若為上學期，則為 1;若為下學期，則為 2。
 ---
 
 ### 4. `time_periods` – 時段資料表
@@ -163,6 +172,9 @@ CREATE TABLE time_periods (
 | `start_time` | time     | 開始時間 | 否 | NOT NULL |
 | `end_time`   | time     | 結束時間 | 否 | NOT NULL，必須晚於開始時間 |
 
+**格式說明：**
+- 開始時間: 符合24小時制，如: 08:00、13:00、18:00。
+- 結束時間: 符合24小時制，如: 08:00、13:00、18:00。
 ---
 
 ### 5. `reservations` – 教室借用申請表
@@ -201,6 +213,13 @@ CREATE TABLE reservations (
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
 
+**格式說明：**
+- 借用日期: 符合實際存在日期，如: 05/25、06/01。
+- 申請單位: 符合"虎科"實際存在單位，如:班級、社團、系學會，四資工二乙、熱舞社、資工系學會。
+- 指導老師: 須為"中文"名字，如:鄭錦聰教授、江季翰教授。
+- 申請人姓名: 須為"中文"名字，如:陳大餅、張中筒。
+- 申請人信箱: "虎科學號"@nfu.edu.tw，如:41143235@nfu.edu.tw。
+- 申請人電話: 須為"臺灣"行動電話號碼格式，如:0912345678。
 ---
 
 ### 🔶 二、關係資料表（Relationships）
@@ -230,7 +249,6 @@ CREATE TABLE course_periods (
 - `course_id` → `courses(id)`  
 - `time_period_id` → `time_periods(id)`  
 - `classroom_id` → `classrooms(id)`
-
 ---
 
 ### 2. `reservations_periods` – 借用申請 × 時段 的中介表
