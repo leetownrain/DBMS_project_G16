@@ -1,6 +1,6 @@
 ------------------------------------
 ## 說明
-![Figure E.1](../image/figureE.1.png)
+![Figure E.1](Picture/figureE.1.png)
 ---
 ###  申請 O1001
 
