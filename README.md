@@ -186,17 +186,17 @@ CREATE TABLE reservations (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|--------------|----------|--------------|--------------|
-| `id`              | int           | 否 | 借用紀錄編號 | 主鍵，自動產生 |
-| `date`            | date          | 否 | 借用日期 | NOT NULL |
-| `reason`          | text          | 否 | 借用原因 | NOT NULL |
-| `status`          | varchar       | 否 | 借用狀態 | NOT NULL, 限定值 |
-| `unit`            | varchar       | 否 | 申請單位 | NOT NULL |
-| `teacher`         | varchar       | 否 | 指導老師 | NOT NULL |
-| `applicant_id`    | int           | 否 | 申請人 ID | NOT NULL |
-| `applicant_name`  | varchar       | 否 | 申請人姓名 | NOT NULL |
-| `applicant_email` | varchar       | 否 | 申請人信箱 | NOT NULL, Email 格式 |
-| `applicant_phone` | varchar       | 否 | 申請人電話 | NOT NULL |
-| `classroom_id`    | int           | 否 | 教室 ID | 外鍵 |
+| `id`              | int           | 借用紀錄編號 | 否 | 主鍵，自動產生 |
+| `date`            | date          | 借用日期 | 否 | NOT NULL |
+| `reason`          | text          | 借用原因 | 否 | NOT NULL |
+| `status`          | varchar       | 借用狀態 | 否 | NOT NULL, 限定值 |
+| `unit`            | varchar       | 申請單位 | 否 | NOT NULL |
+| `teacher`         | varchar       | 指導老師 | 否 | NOT NULL |
+| `applicant_id`    | int           | 申請人 ID | 否 | NOT NULL |
+| `applicant_name`  | varchar       | 申請人姓名 | 否 | NOT NULL |
+| `applicant_email` | varchar       | 申請人信箱 | 否 | NOT NULL, Email 格式 |
+| `applicant_phone` | varchar       | 申請人電話 | 否 | NOT NULL |
+| `classroom_id`    | int           | 教室 ID | 否 | 外鍵 |
 
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
