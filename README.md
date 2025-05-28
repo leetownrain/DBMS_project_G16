@@ -100,7 +100,7 @@ CREATE TABLE users (
 
 **格式說明：**
 - 姓名: 須為"中文"名字，如:陳大餅、張中筒。
-- 電子郵件: "虎科學號"@nfu.edu.tw，如:41143235@nfu.edu.tw。
+- 電子郵件: 須符合以下格式，如虎科信箱、Gmail、Yahoo Mail、Outlook。格式為:"虎科學號"@nfu.edu.tw (41143235@nfu.edu.tw)、123@gmail.com、123@yahoo.com.tw、123outlook@outlook.com。
 
 ---
 
@@ -218,7 +218,7 @@ CREATE TABLE reservations (
 - 申請單位: 符合"虎科"實際存在單位，如:班級、社團、系學會，四資工二乙、熱舞社、資工系學會。
 - 指導老師: 須為"中文"名字，如:鄭錦聰、江季翰。
 - 申請人姓名: 須為"中文"名字，如:陳大餅、張中筒。
-- 申請人信箱: "虎科學號"@nfu.edu.tw，如:41143235@nfu.edu.tw。
+- 申請人信箱: 須符合以下格式，如虎科信箱、Gmail、Yahoo Mail、Outlook。格式為:"虎科學號"@nfu.edu.tw (41143235@nfu.edu.tw)、123@gmail.com、123@yahoo.com.tw、123outlook@outlook.com。
 - 申請人電話: 須為"臺灣"行動電話號碼格式，如:0912345678。
 ---
 
