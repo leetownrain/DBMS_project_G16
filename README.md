@@ -22,7 +22,7 @@
 
 ### 作業二：🔗 [前往作業二連結](https://www.canva.com/design/DAGmr2V3CzA/0mnUy8ykieZKFDUyV-0oBQ/edit?utm_content=DAGmr2V3CzA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-### 簡報：🔗 [前往簡報連結](https://www.canva.com/design/DAGpMgow0HM/hs6JadawLZq7N_KKqGB1qw/edit?utm_content=DAGpMgow0HM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+### 期末簡報：🔗 [前往簡報連結](https://www.canva.com/design/DAGpMgow0HM/g3DIhVA1uYEhztwP-vw_2Q/view?utm_content=DAGpMgow0HM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h9e53976d3b)
 ---
 
 ## 👨‍💻 專案作者
