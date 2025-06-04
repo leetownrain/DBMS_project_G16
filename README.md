@@ -359,6 +359,8 @@ WHERE c.academic_year = '113'
 
 ## 🔐 身份驗證系統（Auth Service）
 
-
 ---
+### 1️⃣ 查詢儲存的用戶資訊
+
+
 ![example](Picture/idcheck.png)
