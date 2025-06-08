@@ -379,6 +379,6 @@ WHERE c.academic_year = '113'
 SELECT * FROM users ORDER BY id ASC; //查看 users 資料表中查詢所有資料
 ```
 
-說明：從 users 這張資料表中，取出所有資料，並依照 id 欄位由小到大排序顯示。
+說明：從 `users` 這張資料表中，取出所有資料，並依照 `id` 欄位由小到大排序顯示。
 
 ![example](Picture/idcheck.png)
