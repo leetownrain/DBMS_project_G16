@@ -375,5 +375,7 @@ WHERE c.academic_year = '113'
 ---
 ### 1️⃣ 查詢儲存的用戶資訊
 
-
+``` 使用 PostgreSQL 資料庫
+SELECT * FROM users ORDER BY id ASC; //查看 users 資料表中查詢所有資料
+```
 ![example](Picture/idcheck.png)
