@@ -2,7 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CalendarDays, Check, Clock, DoorOpen } from "lucide-react"
+import { CalendarDays, Check, Clock, DoorOpen, History } from "lucide-react"
+import { Sidebar } from "@/components/layout/sidebar"
 
 export default function BookingsPage() {
   return (
@@ -24,6 +25,7 @@ export default function BookingsPage() {
         </div>
       </header>
       <div className="flex flex-1">
+        {/* <Sidebar /> */}
         <aside className="w-64 p-4 border-r bg-muted/40 hidden md:block">
           <nav className="space-y-2">
             <Link href="/dashboard">
@@ -32,28 +34,17 @@ export default function BookingsPage() {
                 儀表板
               </Button>
             </Link>
-            <Link href="/classrooms">
-              <Button variant="ghost" className="w-full justify-start">
-                <DoorOpen className="w-5 h-5 mr-2" />
-                教室列表
-              </Button>
-            </Link>
             <Link href="/bookings">
               <Button variant="secondary" className="w-full justify-start">
                 <Clock className="w-5 h-5 mr-2" />
-                預約管理
+                預約查詢
               </Button>
             </Link>
             <Link href="/history">
               <Button variant="ghost" className="w-full justify-start">
-                <CalendarDays className="w-5 h-5 mr-2" />
+                {/* <CalendarDays className="w-5 h-5 mr-2" /> */}
+                <History className="w-5 h-5 mr-2" />
                 歷史記錄
-              </Button>
-            </Link>
-            <Link href="/admin">
-              <Button variant="ghost" className="w-full justify-start">
-                <CalendarDays className="w-5 h-5 mr-2" />
-                管理設定
               </Button>
             </Link>
           </nav>

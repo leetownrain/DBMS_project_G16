@@ -22,6 +22,7 @@ import { RequireAuth } from "@/components/auth/require-auth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
+import { API } from "@/lib/api" // ✅ 加入這行
 
 // 時段資料
 const timeSlots = [
@@ -51,6 +52,8 @@ const weekDays = [
   { id: 6, name: "星期六", short: "六" },
   { id: 7, name: "星期日", short: "日" },
 ]
+
+
 
 export default function CoursesManagementPage() {
   const [isCrawlerDialogOpen, setIsCrawlerDialogOpen] = useState(false)
@@ -257,6 +260,24 @@ export default function CoursesManagementPage() {
   const successCourses = importedCourses.filter((course) => course.status === "success")
   const errorCourses = importedCourses.filter((course) => course.status === "error")
 
+  const handleImportCourses = async () => {
+    console.log("開始匯入課程資料...")
+    try {
+      const res = await fetch(API.course.import, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (!res.ok) throw new Error("匯入失敗")
+      const data = await res.json()
+      alert(`課程匯入成功：${data.message}`)
+    } catch (err) {
+      console.error("匯入課程錯誤：", err)
+      alert("課程匯入失敗，請稍後再試")
+    }
+  }
+
   return (
     <RequireAuth adminOnly>
       <div className="flex flex-col min-h-screen">
@@ -268,7 +289,8 @@ export default function CoursesManagementPage() {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h1 className="text-3xl font-bold tracking-tight">課程管理</h1>
                 <div className="flex flex-col gap-2 md:flex-row">
-                  <Button onClick={() => setIsCrawlerDialogOpen(true)}>
+                  {/* <Button onClick={() => setIsCrawlerDialogOpen(true)}> */}
+                  <Button onClick={handleImportCourses}>
                     <Globe className="w-4 h-4 mr-2" />
                     爬取課程資料
                   </Button>

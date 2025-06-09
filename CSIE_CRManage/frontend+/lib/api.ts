@@ -29,6 +29,7 @@ export const API = {
 
     course: {
         get_by_classroom: (classroomId: string) => `${API_BASE}/courses/by-classroom/${classroomId}`,
+        import: `${API_BASE}/courses/import`, // POST：匯入課程
     },
 
 

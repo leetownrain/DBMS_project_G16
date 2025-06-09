@@ -21,7 +21,7 @@ WEEKDAY_MAP = {
 
 @router.post("/import")
 def import_courses_from_json(session: Session = Depends(get_session)):
-    filepath = "app/data/classroom_schedules_full copy.json"
+    filepath = "app/data/classroom_schedules_full.json"
     if not os.path.exists(filepath):
         raise HTTPException(status_code=500, detail="找不到 JSON 檔案")
 
