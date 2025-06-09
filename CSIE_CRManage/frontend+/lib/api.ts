@@ -9,6 +9,11 @@ export const API_BASE = `${CSIE_MANAGE_URL}/api`
 
 // ✅ API 路徑集中管理
 export const API = {
+    auth: {
+        login: `${API_BASE}/auth/login`,                     // POST：登入
+        verify_token: `${API_BASE}/auth/verify_token`,       // GET：驗證 token
+    },
+
     classroom: {
         get_all_info: `${API_BASE}/classrooms/classroom_info`,
         get_one: (id: string) => `${API_BASE}/classrooms/${id}`,
@@ -22,14 +27,15 @@ export const API = {
         update: (id: number) => `${API_BASE}/sections/${id}`,    
     },
 
-    booking: {
-        pending: `${API_BASE}/bookings?status=pending`,
-        approve: (id: number) => `${API_BASE}/bookings/${id}/approve`,
-        reject: (id: number) => `${API_BASE}/bookings/${id}/reject`,
+    course: {
+        get_by_classroom: (classroomId: string) => `${API_BASE}/courses/by-classroom/${classroomId}`,
     },
 
-    user: {
-        list: `${API_BASE}/users`,
-        promote: (id: number) => `${API_BASE}/users/${id}/promote`,
+
+    booking: {
+        create: `${API_BASE}/bookings`, // POST 建立預約
+        get_by_classroom_date_range: (classroomId: string, startDate: string, endDate: string) =>
+            `${API_BASE}/bookings/by-classroom-date-range?classroom_id=${classroomId}&start_date=${startDate}&end_date=${endDate}`,
     },
+
 }

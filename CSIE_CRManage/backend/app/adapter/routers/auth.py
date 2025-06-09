@@ -7,7 +7,7 @@ from app.database import get_session
 from app.urls import User_APIs
 
 from app.services.http_logic import get_request, post_request
-from app.services.Auth_logic import create_user_in_db, get_user_role, get_user_is_psd_init
+from app.services.Auth_logic import create_user_in_db, get_user_role, get_user_is_psd_init, get_user_name
 from app.services.token_service import get_current_user
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -26,9 +26,11 @@ async def login(user_info: loginCommand, session: Session = Depends(get_session)
     if check_email_result['result']:
         try:
             user_role = get_user_role(session, user_info.email)
+            user_name = get_user_name(session, user_info.email)
         except HTTPException:
             create_user_in_db(session, user_info.email)
             user_role = get_user_role(session, user_info.email)
+            user_name = get_user_name(session, user_info.email)
         user_is_psd_init = get_user_is_psd_init(session, user_info.email)
 
         if user_is_psd_init:
@@ -44,7 +46,7 @@ async def login(user_info: loginCommand, session: Session = Depends(get_session)
 
         # if login_data & login_data['result']:
         if login_data:
-            return {"result": True,"role": user_role, "token": login_data['access_token'],"is_psd_init":user_is_psd_init,  "message": "Login successful."}
+            return {"result": True,"role": user_role, "token": login_data['access_token'],"is_psd_init":user_is_psd_init, "name":user_name,  "message": "Login successful."}
         else:
             return {"result": False, "message": "Login failed."}
     else:
@@ -69,10 +71,11 @@ async def login(user_info: loginCommand, session: Session = Depends(get_session)
             data = login_response.json()
             user_role = get_user_role(session, user_info.email)
             user_is_psd_init = get_user_is_psd_init(session, user_info.email)
+            user_name = get_user_name(session, user_info.email)
             # if data['result']:
             if data:
                 print("登入成功")
-                return {"result": True,"role":user_role, "token": data['access_token'], "is_psd_init":user_is_psd_init, "message": "No Email. Created. Login successful."}
+                return {"result": True,"role":user_role, "token": data['access_token'], "is_psd_init":user_is_psd_init, "name":user_name, "message": "No Email. Created. Login successful."}
             else:
                 return {"result": False,"message": "No Email. Created. Login failed."}
         else:

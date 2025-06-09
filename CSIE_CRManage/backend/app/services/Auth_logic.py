@@ -39,3 +39,11 @@ def get_user_is_psd_init(session: Session, email: str) -> bool:
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user.is_psd_init
+
+def get_user_name(session: Session, email: str) -> str:
+    """根據 email 查詢使用者名稱 username，若找不到則拋出 HTTPException"""
+    statement = select(User).where(User.email == email)
+    user = session.exec(statement).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.username

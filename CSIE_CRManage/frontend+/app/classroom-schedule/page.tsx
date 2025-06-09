@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
@@ -25,94 +25,63 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { API } from "@/lib/api" // ✅ 加入這行
 
-// 時段資料
-const timeSlots = [
-  { id: 1, name: "第一節", time: "08:00-09:00" },
-  { id: 2, name: "第二節", time: "09:00-10:00" },
-  { id: 3, name: "第三節", time: "10:00-11:00" },
-  { id: 4, name: "第四節", time: "11:00-12:00" },
-  { id: 5, name: "中午", time: "12:00-13:00" },
-  { id: 6, name: "第五節", time: "13:00-14:00" },
-  { id: 7, name: "第六節", time: "14:00-15:00" },
-  { id: 8, name: "第七節", time: "15:00-16:00" },
-  { id: 9, name: "第八節", time: "16:00-17:00" },
-  { id: 10, name: "第九節", time: "17:00-18:00" },
-  { id: 11, name: "第十節", time: "18:00-19:00" },
-  { id: 12, name: "第十一節", time: "19:00-20:00" },
-  { id: 13, name: "第十二節", time: "20:00-21:00" },
-  { id: 14, name: "第十三節", time: "21:00-22:00" },
-  { id: 15, name: "第十四節", time: "22:00-23:00" },
-]
+interface Classroom {
+  id: string
+  name: string
+  capacity: number
+  isActive: boolean
+}
 
-// 教室資料
-const classrooms = [
-  { id: "301", name: "301教室", capacity: 40, equipment: "投影機, 音響系統, 電腦" },
-  { id: "302", name: "302教室", capacity: 30, equipment: "投影機, 白板" },
-  { id: "303", name: "303教室", capacity: 30, equipment: "投影機, 白板" },
-  { id: "401", name: "401教室", capacity: 50, equipment: "投影機, 電腦, 網路設備" },
-  { id: "402", name: "402教室", capacity: 25, equipment: "實驗設備, 投影機" },
-  { id: "501", name: "501教室", capacity: 60, equipment: "投影機, 音響系統, 電腦, 視訊會議設備" },
-]
+interface TimeSlot {
+  id: number
+  label: string
+  start_time: string
+  end_time: string
+}
 
-// 模擬課程資料
-const courses = [
-  { id: 1, name: "程式設計", teacher: "王教授", classroom: "301", day: 1, startSlot: 1, endSlot: 2 },
-  { id: 2, name: "資料結構", teacher: "李教授", classroom: "301", day: 1, startSlot: 6, endSlot: 7 },
-  { id: 3, name: "計算機概論", teacher: "張教授", classroom: "301", day: 2, startSlot: 3, endSlot: 4 },
-  { id: 4, name: "網路安全", teacher: "陳教授", classroom: "301", day: 3, startSlot: 6, endSlot: 8 },
-  { id: 5, name: "人工智慧", teacher: "林教授", classroom: "301", day: 4, startSlot: 1, endSlot: 3 },
-  { id: 6, name: "資料庫系統", teacher: "黃教授", classroom: "301", day: 5, startSlot: 6, endSlot: 7 },
-  { id: 7, name: "軟體工程", teacher: "吳教授", classroom: "302", day: 1, startSlot: 3, endSlot: 4 },
-  { id: 8, name: "作業系統", teacher: "趙教授", classroom: "302", day: 2, startSlot: 6, endSlot: 8 },
-  { id: 9, name: "演算法", teacher: "孫教授", classroom: "302", day: 3, startSlot: 1, endSlot: 2 },
-  { id: 10, name: "電腦圖學", teacher: "周教授", classroom: "302", day: 4, startSlot: 3, endSlot: 5 },
-]
+interface CourseSlot {
+  course_name: string
+  teacher: string
+  day_of_week: number
+  section: string
+}
+
+interface BookingSlot {
+  date: string
+  classroom: string
+  section: string
+  applicant: string
+  reason: string
+  day_of_week: number
+}
 
 // 模擬預約資料
-const bookings = [
-  { id: 1, classroom: "301", day: 1, slot: 3, purpose: "小組討論", user: "學生A" },
-  { id: 2, classroom: "301", day: 2, slot: 5, purpose: "午休活動", user: "學生B" },
-  { id: 3, classroom: "301", day: 3, slot: 4, purpose: "專題會議", user: "學生C" },
-  { id: 4, classroom: "301", day: 5, slot: 8, purpose: "社團活動", user: "學生D" },
-  { id: 5, classroom: "302", day: 2, slot: 1, purpose: "讀書會", user: "學生E" },
-  { id: 6, classroom: "302", day: 4, slot: 6, purpose: "演講準備", user: "學生F" },
-]
+// const bookings = [
+//   { id: 1, classroom: "301", day: 1, slot: 3, purpose: "小組討論", user: "學生A" },
+//   { id: 2, classroom: "301", day: 2, slot: 5, purpose: "午休活動", user: "學生B" },
+//   { id: 3, classroom: "301", day: 3, slot: 4, purpose: "專題會議", user: "學生C" },
+//   { id: 4, classroom: "301", day: 5, slot: 8, purpose: "社團活動", user: "學生D" },
+//   { id: 5, classroom: "302", day: 2, slot: 1, purpose: "讀書會", user: "學生E" },
+//   { id: 6, classroom: "302", day: 4, slot: 6, purpose: "演講準備", user: "學生F" },
+// ]
 
-// 檢查時段是否被課程佔用
-const isSlotOccupiedByCourse = (classroom: string, day: number, slot: number) => {
-  return courses.some(
-    (course) =>
-      course.classroom === classroom && course.day === day && slot >= course.startSlot && slot <= course.endSlot,
-  )
-}
+
 
 // 檢查時段是否被預約
-const isSlotBooked = (classroom: string, day: number, slot: number) => {
-  return bookings.some((booking) => booking.classroom === classroom && booking.day === day && booking.slot === slot)
-}
-
-// 獲取佔用時段的課程或預約信息
-const getSlotInfo = (classroom: string, day: number, slot: number) => {
-  const course = courses.find(
-    (c) => c.classroom === classroom && c.day === day && slot >= c.startSlot && slot <= c.endSlot,
-  )
-  if (course) {
-    return { type: "course", name: course.name, teacher: course.teacher }
-  }
-
-  const booking = bookings.find((b) => b.classroom === classroom && b.day === day && b.slot === slot)
-  if (booking) {
-    return { type: "booking", purpose: booking.purpose, user: booking.user }
-  }
-
-  return null
-}
+// const isSlotBooked = (classroom: string, day: number, slot: number) => {
+//   return bookings.some((booking) => booking.classroom === classroom && booking.day === day && booking.slot === slot)
+// }
 
 export default function ClassroomSchedulePage() {
-  const router = useRouter()
   const { isAuthenticated, userName } = useAuth()
-  const [selectedClassroom, setSelectedClassroom] = useState<string>("301")
+  const [classrooms, setClassrooms] = useState<Classroom[]>([])
+  const [selectedClassroom, setSelectedClassroom] = useState<string>("")
+  const [courseSlots, setCourseSlots] = useState<CourseSlot[]>([])
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
+  const [bookingSlots, setBookingSlots] = useState<BookingSlot[]>([])
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({ start: new Date(), end: new Date() })  
   const [weekStartDate, setWeekStartDate] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }))
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false)
   const [selectedBookingInfo, setSelectedBookingInfo] = useState<{
@@ -133,7 +102,142 @@ export default function ClassroomSchedulePage() {
     department: "",
     supervisor: "",
     reason: "",
+    classroom_id: "",
   })
+
+  useEffect(() => {
+    const fetchClassrooms = async () => {
+      try {
+        const res = await fetch(API.classroom.get_all_info)
+        if (!res.ok) throw new Error("無法取得教室資料")
+        const data = await res.json()
+        setClassrooms(data)
+        if (data.length > 0) {
+          setSelectedClassroom(data[0].id)
+        }
+      } catch (error) {
+        console.error("載入教室失敗：", error)
+      }
+    }
+    fetchClassrooms()
+  }, [])
+
+  useEffect(() => {
+    const fetchTimeSlots = async () => {
+      try {
+        const res = await fetch(API.section.get_all_info)
+        if (!res.ok) throw new Error("無法取得時段資料")
+        const data = await res.json()
+        const mapped = data.map((s: any) => ({
+          id: s.id,
+          label: s.label,
+          start_time: s.start_time.slice(0, 5),
+          end_time: s.end_time.slice(0, 5),
+        }))
+        setTimeSlots(mapped)
+      } catch (error) {
+        console.error("載入時段失敗：", error)
+      }
+    }
+    fetchTimeSlots()
+  }, [])
+
+  useEffect(() => {
+    if (!selectedClassroom) return
+
+    const fetchCourseSlots = async () => {
+      try {
+        const res = await fetch(API.course.get_by_classroom(selectedClassroom))
+        if (!res.ok) throw new Error("無法取得課程資料")
+        const data = await res.json()
+        setCourseSlots(data)
+      } catch (error) {
+        console.error("載入課程失敗：", error)
+      }
+    }
+
+    fetchCourseSlots()
+  }, [selectedClassroom])
+
+  useEffect(() => {
+    if (selectedClassroom && dateRange.start && dateRange.end) {
+      fetchBookings()
+    }
+  }, [selectedClassroom, dateRange])
+
+  useEffect(() => {
+    const start = weekStartDate
+    const end = addDays(weekStartDate, 6)
+    setDateRange({ start, end })
+  }, [weekStartDate])
+
+  const fetchBookings = async () => {
+    try {
+      if (!selectedClassroom || !dateRange.start || !dateRange.end) return
+
+      const startDate = format(dateRange.start, "yyyy-MM-dd")
+      const endDate = format(addDays(dateRange.start, 6), "yyyy-MM-dd")
+
+      const url = API.booking.get_by_classroom_date_range(
+        selectedClassroom,
+        startDate,
+        endDate
+      )
+
+      const res = await fetch(url)
+      if (!res.ok) throw new Error("無法取得預約資料")
+
+      let data = await res.json()
+
+      // ✅ 補上 day_of_week (1 = Monday, 7 = Sunday)
+      data = data.map((item: any) => {
+        const dayOfWeek = new Date(item.date).getDay()
+        return {
+          ...item,
+          day_of_week: dayOfWeek === 0 ? 7 : dayOfWeek,
+        }
+      })
+
+      setBookingSlots(data)
+    } catch (err) {
+      console.error("載入預約資料失敗：", err)
+    }
+  }
+
+
+  // 檢查時段是否被課程佔用
+  const isSlotOccupiedByCourse = (day: number, slot: number) => {
+    const sectionLabel = timeSlots.find((t) => t.id === slot)?.label
+    return courseSlots.some((c) => c.day_of_week === day && c.section === sectionLabel)
+  }
+
+  const isSlotBooked = (day: number, slot: number) => {
+    const sectionLabel = timeSlots.find((t) => t.id === slot)?.label
+    return bookingSlots.some((b) => b.day_of_week === day && b.section === sectionLabel)
+  }
+
+
+  // 獲取佔用時段的課程或預約信息
+  // ⏩ 修改為可查詢預約資訊
+  const getSlotInfo = (day: number, slot: number) => {
+    const sectionLabel = timeSlots.find((t) => t.id === slot)?.label
+
+    const courseMatch = courseSlots.find(
+      (c) => c.day_of_week === day && c.section === sectionLabel
+    )
+    if (courseMatch) {
+      return { type: "course", name: courseMatch.course_name, teacher: courseMatch.teacher }
+    }
+
+    const bookingMatch = bookingSlots.find(
+      (b) => b.day_of_week === day && b.section === sectionLabel
+    )
+    if (bookingMatch) {
+      return { type: "booking", name: bookingMatch.reason, teacher: bookingMatch.applicant }
+    }
+
+    return null
+  }
 
   // 生成一周的日期
   const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -161,28 +265,29 @@ export default function ClassroomSchedulePage() {
       date: dayInfo.date,
       dayNumber: day,
       slotId: slot,
-      slotName: slotInfo.name,
-      slotTime: slotInfo.time,
+      slotName: slotInfo.label,
+      slotTime: slotInfo.start_time + "-" + slotInfo.end_time,
     })
 
     // 重置表單
     setBookingForm({
-      startTimeSlot: slotInfo.name,
-      endTimeSlot: slotInfo.name,
-      applicantName: "",
+      startTimeSlot: slotInfo.label,
+      endTimeSlot: slotInfo.label,
+      applicantName: userName || "",
       studentId: "",
       phone: "",
       email: "",
       department: "",
       supervisor: "",
       reason: "",
+      classroom_id: selectedClassroom,
     })
 
     // 開啟預約對話框
     setIsBookingDialogOpen(true)
   }
 
-  const handleSubmitBooking = () => {
+  const handleSubmitBooking = async () => {
     // 驗證表單
     if (!selectedBookingInfo?.classroom) {
       alert("請選擇借用教室")
@@ -225,16 +330,52 @@ export default function ClassroomSchedulePage() {
       return
     }
 
-    // 模擬提交預約
-    console.log("提交預約:", {
-      ...selectedBookingInfo,
-      ...bookingForm,
-      user: userName,
-    })
+    const startIdx = timeSlots.findIndex((s) => s.label === bookingForm.startTimeSlot)
+    const endIdx = timeSlots.findIndex((s) => s.label === bookingForm.endTimeSlot)
+    const section_ids = timeSlots.slice(startIdx, endIdx + 1).map((s) => s.id)
 
-    alert("預約申請已提交，等待審核")
-    setIsBookingDialogOpen(false)
+    const payload = {
+      applicant_id: bookingForm.studentId,
+      applicant_name: bookingForm.applicantName,
+      applicant_email: bookingForm.email,
+      applicant_phone: bookingForm.phone,
+      unit: bookingForm.department,
+      teacher: bookingForm.supervisor,
+      reason: bookingForm.reason,
+      date: format(selectedBookingInfo.date, "yyyy-MM-dd"),
+      classroom_id: bookingForm.classroom_id,
+      section_ids,
+    }
+
+    try {
+      const res = await fetch(API.booking.create, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error("預約失敗")
+
+      alert("預約成功")
+      setIsBookingDialogOpen(false)
+      setBookingForm({
+        startTimeSlot: "",
+        endTimeSlot: "",
+        applicantName: userName || "",
+        studentId: "",
+        phone: "",
+        email: "",
+        department: "",
+        supervisor: "",
+        reason: "",
+        classroom_id: selectedClassroom,
+      })
+      await fetchBookings()
+    } catch (err) {
+      console.error("送出失敗：", err)
+      alert("提交失敗")
+    }
   }
+
 
   const handleWeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value) {
@@ -263,7 +404,7 @@ export default function ClassroomSchedulePage() {
                 <SelectContent>
                   {classrooms.map((classroom) => (
                     <SelectItem key={classroom.id} value={classroom.id}>
-                      {classroom.name}
+                      {classroom.id}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -286,7 +427,7 @@ export default function ClassroomSchedulePage() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {classrooms.find((c) => c.id === selectedClassroom)?.name} 週課表 ({format(weekStartDate, "yyyy/MM/dd")}{" "}
+                {classrooms.find((c) => c.id === selectedClassroom)?.name} ({format(weekStartDate, "yyyy/MM/dd")}{" "}
                 ~ {format(addDays(weekStartDate, 6), "yyyy/MM/dd")})
               </CardTitle>
               <CardDescription>
@@ -313,11 +454,11 @@ export default function ClassroomSchedulePage() {
                   <TableBody>
                     {timeSlots.map((slot) => (
                       <TableRow key={slot.id}>
-                        <TableCell className="font-medium text-center">{slot.name}</TableCell>
+                        <TableCell className="font-medium text-center">{slot.label}</TableCell>
                         {weekDays.map((day) => {
-                          const isCourseOccupied = isSlotOccupiedByCourse(selectedClassroom, day.dayNumber, slot.id)
-                          const isBooked = isSlotBooked(selectedClassroom, day.dayNumber, slot.id)
-                          const slotInfo = getSlotInfo(selectedClassroom, day.dayNumber, slot.id)
+                          const isCourseOccupied = isSlotOccupiedByCourse(day.dayNumber, slot.id)
+                          const isBooked = isSlotBooked(day.dayNumber, slot.id)
+                          const slotInfo = getSlotInfo(day.dayNumber, slot.id)
 
                           return (
                             <TableCell key={day.dayNumber} className="p-0">
@@ -328,8 +469,8 @@ export default function ClassroomSchedulePage() {
                                 </div>
                               ) : isBooked ? (
                                 <div className="w-full h-16 flex flex-col items-center justify-center bg-red-100 text-red-800 p-1">
-                                  <div className="text-xs font-medium">{slotInfo?.purpose}</div>
-                                  <div className="text-xs">{slotInfo?.user}</div>
+                                  <div className="text-xs font-medium">{slotInfo?.name}</div>
+                                  <div className="text-xs">{slotInfo?.teacher}</div>
                                 </div>
                               ) : (
                                 <div
@@ -434,8 +575,8 @@ export default function ClassroomSchedulePage() {
                       </SelectTrigger>
                       <SelectContent>
                         {timeSlots.map((slot) => (
-                          <SelectItem key={slot.id} value={slot.name}>
-                            {slot.name} ({slot.time})
+                          <SelectItem key={slot.id} value={slot.label}>
+                            {slot.label}（{slot.start_time}-{slot.end_time}）
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -455,12 +596,12 @@ export default function ClassroomSchedulePage() {
                           .filter(
                             (slot) =>
                               !bookingForm.startTimeSlot ||
-                              timeSlots.findIndex((s) => s.name === bookingForm.startTimeSlot) <=
-                                timeSlots.findIndex((s) => s.name === slot.name),
+                              timeSlots.findIndex((s) => s.label === bookingForm.startTimeSlot) <=
+                                timeSlots.findIndex((s) => s.label === slot.label),
                           )
                           .map((slot) => (
-                            <SelectItem key={slot.id} value={slot.name}>
-                              {slot.name} ({slot.time})
+                            <SelectItem key={slot.id} value={slot.label}>
+                              {slot.label}（{slot.start_time}-{slot.end_time}）
                             </SelectItem>
                           ))}
                       </SelectContent>

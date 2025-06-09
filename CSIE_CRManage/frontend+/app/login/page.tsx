@@ -12,6 +12,8 @@ import { Footer } from "@/components/layout/footer"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import { API } from "@/lib/api"
+import { da } from "date-fns/locale"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,19 +32,20 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      // 模擬登入請求
-      // 在實際應用中，這裡應該是向後端API發送請求
-      if (email === "admin@example.com" && password === "password") {
-        // 管理員登入
-        login("admin", "管理員")
-        router.push(redirectPath)
-      } else if (email === "user@example.com" && password === "password") {
-        // 一般用戶登入
-        login("user", "王小明")
+      const res = await fetch(API.auth.login, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+
+      if (res.ok && data.result) {
+        localStorage.setItem("access_token", data.token)
+        // localStorage.setItem("userName", data.name || email)
+        login(data.role, data.name || email) // 不儲存 role
         router.push(redirectPath)
       } else {
-        // 登入失敗
-        setError("電子郵件或密碼錯誤")
+        setError(data.message || "登入失敗")
       }
     } catch (err) {
       setError("登入時發生錯誤，請稍後再試")
@@ -111,28 +114,6 @@ export default function LoginPage() {
                   註冊
                 </Link>
               </p>
-            </div>
-
-            <div className="border-t pt-4">
-              <p className="text-sm text-center text-muted-foreground mb-2">測試帳號</p>
-              <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                <div>
-                  <p>
-                    <strong>管理員帳號:</strong> admin@example.com
-                  </p>
-                  <p>
-                    <strong>密碼:</strong> password
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <strong>一般用戶帳號:</strong> user@example.com
-                  </p>
-                  <p>
-                    <strong>密碼:</strong> password
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -24,6 +24,7 @@ class Booking(SQLModel, table=True):
     reason: str = Field(max_length=100)
     status: VerifyStatusEnum = Field(default=VerifyStatusEnum.under_review)
     data: date
+    classroom_id: str = Field(foreign_key="classroom.id")
 
     sections: List["Section"] = Relationship(
         back_populates="bookings", link_model=ReservationPeriod

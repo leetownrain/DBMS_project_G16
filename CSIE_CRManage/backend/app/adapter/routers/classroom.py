@@ -6,7 +6,7 @@ from app.database import get_session
 router = APIRouter(prefix="/classrooms", tags=["Classroom"])
 
 # 取得所有教室
-@router.get("/", response_model=list[Classroom])
+@router.get("/classroom_info", response_model=list[Classroom])
 def get_classrooms(session: Session = Depends(get_session)):
     statement = select(Classroom).order_by(Classroom.name)
     return session.exec(statement).all()

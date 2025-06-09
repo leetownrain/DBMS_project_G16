@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserName(name)
 
     // 將用戶信息存儲到 localStorage
-    localStorage.setItem("userRole", role)
+    // localStorage.setItem("userRole", role)
     localStorage.setItem("userName", name)
   }
 
@@ -53,8 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserName(null)
 
     // 清除 localStorage 中的用戶信息
-    localStorage.removeItem("userRole")
+    // localStorage.removeItem("userRole")
     localStorage.removeItem("userName")
+    localStorage.removeItem("access_token")
   }
 
   // 在初始化完成前不渲染子組件，避免閃爍
