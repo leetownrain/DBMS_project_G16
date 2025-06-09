@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -21,37 +20,82 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Sidebar } from "@/components/layout/sidebar"
 import { RequireAuth } from "@/components/auth/require-auth"
+import { API } from "@/lib/api"
+
+interface Classroom {
+  id: string
+  name: string
+  capacity: number
+  isActive: boolean
+}
 
 export default function ClassroomsManagementPage() {
-  const router = useRouter()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingClassroom, setEditingClassroom] = useState<any>(null)
+  const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null)
+  const [classrooms, setClassrooms] = useState<Classroom[]>([])
 
-  // 模擬教室資料
-  const classrooms = [
-    { id: "301", name: "301教室", capacity: 40, active: true },
-    { id: "302", name: "302教室", capacity: 30, active: true },
-    { id: "303", name: "303教室", capacity: 30, active: false },
-    { id: "401", name: "401教室", capacity: 50, active: true },
-    { id: "402", name: "402教室", capacity: 25, active: true },
-    { id: "501", name: "501教室", capacity: 60, active: true },
-    { id: "502", name: "502教室", capacity: 45, active: false },
-  ]
+  const fetchClassrooms = async () => {
+    try {
+      const res = await fetch(API.classroom.get_all_info)
+      if (!res.ok) throw new Error("無法取得教室資料")
+      const data = await res.json()
+      setClassrooms(data)
+    } catch (error) {
+      console.error("載入教室失敗：", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchClassrooms()
+  }, [])
 
   const handleAddClassroom = () => {
     setEditingClassroom(null)
     setIsDialogOpen(true)
   }
 
-  const handleEditClassroom = (classroom: any) => {
+  const handleEditClassroom = (classroom: Classroom) => {
     setEditingClassroom(classroom)
     setIsDialogOpen(true)
   }
 
-  const handleSaveClassroom = () => {
-    // 模擬儲存教室資料
-    setIsDialogOpen(false)
-    // 在實際應用中，這裡應該發送請求到後端API
+  const handleSaveClassroom = async () => {
+    const idInput = document.getElementById("classroom-id") as HTMLInputElement
+    const nameInput = document.getElementById("classroom-name") as HTMLInputElement
+    const capacityInput = document.getElementById("classroom-capacity") as HTMLInputElement
+    const activeInput = document.getElementById("classroom-active") as HTMLElement
+
+    const updatedPayload: Partial<Classroom> = {
+      name: nameInput.value,
+      capacity: parseInt(capacityInput.value, 10),
+      isActive: activeInput.getAttribute("aria-checked") === "true",
+    }
+
+    try {
+      if (editingClassroom) {
+        const res = await fetch(API.classroom.update(editingClassroom.id), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedPayload),
+        })
+        if (!res.ok) throw new Error("更新失敗")
+      } else {
+        const res = await fetch(API.classroom.create, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: idInput.value,
+            ...updatedPayload,
+          }),
+        })
+        if (!res.ok) throw new Error("新增失敗")
+      }
+
+      await fetchClassrooms()
+      setIsDialogOpen(false)
+    } catch (err) {
+      console.error("儲存教室失敗：", err)
+    }
   }
 
   return (
@@ -95,10 +139,10 @@ export default function ClassroomsManagementPage() {
                           <TableCell>
                             <span
                               className={`px-2 py-1 rounded-full text-xs ${
-                                classroom.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                classroom.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                               }`}
                             >
-                              {classroom.active ? "啟用" : "停用"}
+                              {classroom.isActive ? "啟用" : "停用"}
                             </span>
                           </TableCell>
                           <TableCell className="text-right">
@@ -168,9 +212,9 @@ export default function ClassroomsManagementPage() {
                   啟用狀態
                 </Label>
                 <div className="flex items-center space-x-2 col-span-3">
-                  <Switch id="classroom-active" defaultChecked={editingClassroom?.active !== false} />
+                  <Switch id="classroom-active" defaultChecked={editingClassroom?.isActive !== false} />
                   <Label htmlFor="classroom-active" className="cursor-pointer">
-                    {editingClassroom?.active !== false ? "啟用" : "停用"}
+                    {editingClassroom?.isActive !== false ? "啟用" : "停用"}
                   </Label>
                 </div>
               </div>
