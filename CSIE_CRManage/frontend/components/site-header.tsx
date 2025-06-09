@@ -17,7 +17,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-b">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-semibold">
             教室預約系統

@@ -1,13 +1,12 @@
 from fastapi import HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, select, asc
 from app.models.classroom import Classroom, ClassroomCreate
 from typing import List
 
 def get_all_classrooms(session: Session) -> List[Classroom]:
-    statement = select(Classroom)
+    statement = select(Classroom).order_by(asc(Classroom.id))  # 依據 name 升冪排序
     results = session.exec(statement).all()
     return results
-
 
 def create_classroom(session: Session, classroom_data: ClassroomCreate) -> Classroom:
     if session.get(Classroom, classroom_data.id):

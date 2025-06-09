@@ -23,7 +23,7 @@ class Booking(SQLModel, table=True):
     teacher_unit: str = Field(max_length=20)
     teacher: str = Field(max_length=20)
     reason: str = Field(max_length=100)
-    classroom_id: int = Field(foreign_key='classroom.id')
+    classroom_id: str = Field(foreign_key='classroom.id')
     verify_status: VerifyStatusEnum = Field(default=VerifyStatusEnum.under_review)
     booking_type: str = Field(default='線上短期借用', max_length=20) 
     course_info_id: int = Field(foreign_key='courseinfo.id')
