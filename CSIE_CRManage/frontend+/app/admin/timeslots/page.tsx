@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { API } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -21,42 +22,91 @@ import { Footer } from "@/components/layout/footer"
 import { Sidebar } from "@/components/layout/sidebar"
 import { RequireAuth } from "@/components/auth/require-auth"
 
+type Section = {
+  id: number
+  label: string
+  start_time: string
+  end_time: string
+  course_time_id: number | null
+  active?: boolean
+}
+
 export default function TimeSlotsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingTimeSlot, setEditingTimeSlot] = useState<any>(null)
+  const [editingTimeSlot, setEditingTimeSlot] = useState<Section | null>(null)
+  const [sections, setSections] = useState<Section[]>([])
 
-  // 模擬時段資料
-  const timeSlots = [
-    { id: 1, name: "第一節", startTime: "08:00", endTime: "09:00", active: true },
-    { id: 2, name: "第二節", startTime: "09:00", endTime: "10:00", active: true },
-    { id: 3, name: "第三節", startTime: "10:00", endTime: "11:00", active: true },
-    { id: 4, name: "第四節", startTime: "11:00", endTime: "12:00", active: true },
-    { id: 5, name: "中午", startTime: "12:00", endTime: "13:00", active: true },
-    { id: 6, name: "第五節", startTime: "13:00", endTime: "14:00", active: true },
-    { id: 7, name: "第六節", startTime: "14:00", endTime: "15:00", active: true },
-    { id: 8, name: "第七節", startTime: "15:00", endTime: "16:00", active: true },
-    { id: 9, name: "第八節", startTime: "16:00", endTime: "17:00", active: true },
-    { id: 10, name: "第九節", startTime: "17:00", endTime: "18:00", active: true },
-    { id: 11, name: "第十節", startTime: "18:00", endTime: "19:00", active: true },
-    { id: 12, name: "第十一節", startTime: "19:00", endTime: "20:00", active: true },
-    { id: 13, name: "第十二節", startTime: "20:00", endTime: "21:00", active: true },
-    { id: 14, name: "第十三節", startTime: "21:00", endTime: "22:00", active: true },
-  ]
+  const fetchSections = async () => {
+    try {
+      const res = await fetch(API.section.get_all_info, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (!res.ok) throw new Error("無法取得時段資料")
+      const data: Section[] = await res.json()
+      data.forEach((item) => {
+        item.start_time = item.start_time.split(":").slice(0, 2).join(":")
+        item.end_time = item.end_time.split(":").slice(0, 2).join(":")
+        item.active = true // 假設預設啟用
+      })
+      setSections(data)
+    } catch (error) {
+      console.error("載入時段失敗：", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchSections()
+  }, [])
 
   const handleAddTimeSlot = () => {
     setEditingTimeSlot(null)
     setIsDialogOpen(true)
   }
 
-  const handleEditTimeSlot = (timeSlot: any) => {
+  const handleEditTimeSlot = (timeSlot: Section) => {
     setEditingTimeSlot(timeSlot)
     setIsDialogOpen(true)
   }
 
-  const handleSaveTimeSlot = () => {
-    // 模擬儲存時段資料
-    setIsDialogOpen(false)
-    // 在實際應用中，這裡應該發送請求到後端API
+  const handleSaveTimeSlot = async () => {
+    const nameInput = document.getElementById("timeslot-name") as HTMLInputElement
+    const startInput = document.getElementById("start-time") as HTMLInputElement
+    const endInput = document.getElementById("end-time") as HTMLInputElement
+
+    const payload = {
+      label: nameInput.value,
+      start_time: `${startInput.value}:00`,
+      end_time: `${endInput.value}:00`,
+    }
+
+    try {
+      if (editingTimeSlot) {
+        // 編輯模式
+        const res = await fetch(API.section.update(editingTimeSlot.id), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) throw new Error("更新失敗")
+      } else {
+        // 新增模式
+        const res = await fetch(API.section.create, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) throw new Error("新增失敗")
+      }
+
+      await fetchSections()
+      setIsDialogOpen(false)
+    } catch (err) {
+      console.error("儲存時段失敗：", err)
+    }
+
   }
 
   return (
@@ -92,11 +142,11 @@ export default function TimeSlotsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {timeSlots.map((slot) => (
+                      {sections.map((slot) => (
                         <TableRow key={slot.id}>
-                          <TableCell>{slot.name}</TableCell>
-                          <TableCell>{slot.startTime}</TableCell>
-                          <TableCell>{slot.endTime}</TableCell>
+                          <TableCell>{slot.label}</TableCell>
+                          <TableCell>{slot.start_time}</TableCell>
+                          <TableCell>{slot.end_time}</TableCell>
                           <TableCell>
                             <span
                               className={`px-2 py-1 rounded-full text-xs ${
@@ -138,7 +188,7 @@ export default function TimeSlotsPage() {
                 </Label>
                 <Input
                   id="timeslot-name"
-                  defaultValue={editingTimeSlot?.name || ""}
+                  defaultValue={editingTimeSlot?.label || ""}
                   placeholder="例如：第一節"
                   className="col-span-3"
                 />
@@ -150,7 +200,7 @@ export default function TimeSlotsPage() {
                 <Input
                   id="start-time"
                   type="time"
-                  defaultValue={editingTimeSlot?.startTime || ""}
+                  defaultValue={editingTimeSlot?.start_time || ""}
                   className="col-span-3"
                 />
               </div>
@@ -158,7 +208,12 @@ export default function TimeSlotsPage() {
                 <Label htmlFor="end-time" className="text-right">
                   結束時間
                 </Label>
-                <Input id="end-time" type="time" defaultValue={editingTimeSlot?.endTime || ""} className="col-span-3" />
+                <Input
+                  id="end-time"
+                  type="time"
+                  defaultValue={editingTimeSlot?.end_time || ""}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="status" className="text-right">
