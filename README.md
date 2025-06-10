@@ -424,7 +424,7 @@ WHERE
     AND c.semester = 2;
 ```
 
-![example](Picture/查詢時段資料.jpg)
+![example](Picture/查詢113-2 BGC0501的所有課程資料.jpg)
 
 ### 6️⃣ 新增課程資訊(1)
 
