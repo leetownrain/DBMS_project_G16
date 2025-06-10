@@ -128,14 +128,13 @@
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|---------|-----------|----|--------------|
-| `id`     |   integer   | 使用者編號 | 否 | 主鍵、自動產生、UNIQUE |
+| `id`     | integer | 使用者編號 | 否 | 主鍵、自動產生、UNIQUE |
 | `name`   | string | 使用者姓名 | 否 | 長度2-25字中文  正規表示式：'^[\u4e00-\u9fa5]{2,25}$' |
 | `email`  | string | 電子郵件   | 否 | 唯一性，符合電子郵件格式(如後) |
 | `password` | string | 帳號的密碼 | 否 | 長度８到２０且須包含至少一個英文字母和一個數字 |
 
 **格式說明：**  
-- 電子郵件（補充）
-        正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
+- 電子郵件（補充）正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
 
 ---
 
@@ -148,7 +147,7 @@
 
 ```sql
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id VARCHAR(7) NOT NULL,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user'))
@@ -158,9 +157,9 @@ CREATE TABLE users (
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|---------|-----------|----|--------------|
 | `id`     |   int   | 使用者編號 | 否 | 主鍵，符合學號或員工編號格式(如後) |
-| `name`   | varchar | 使用者姓名 | 否 | 長度2-25字中文  正規表示式：'^[\u4e00-\u9fa5]{2,25}$' |
-| `email`  | varchar | 電子郵件   | 否 | 唯一性，符合電子郵件格式(如後) |
-| `role`   | varchar | 使用者角色 | 否 | 僅限 'admin' 或 'user' |
+| `name`   | string | 使用者姓名 | 否 | 長度2-25字中文  正規表示式：'^[\u4e00-\u9fa5]{2,25}$' |
+| `email`  | string | 電子郵件   | 否 | 唯一性，符合電子郵件格式(如後) |
+| `role`   | string | 使用者角色 | 否 | 僅限 'admin' 或 'user' |
 
 **格式說明：**  
 - 使用者編號：須為「虎尾科技大學」學生之學號，共 8 碼，或是教師員工號碼，共6碼。  
@@ -179,8 +178,7 @@ CREATE TABLE users (
        第五、六碼：個人編碼，如：陳國益為29。  
        正規表示式：'^[A-Z]\d{2}[0P]\d{2}$'   
 - 姓名：須為"中文"名字，如:陳大餅、張中筒。
-- 電子郵件：須符合電子郵件標準格式，如：使用者名稱@網域名稱，student123@nfu.edu.tw、user@gmail.com。  
-正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
+- 電子郵件：須符合電子郵件標準格式，如：使用者名稱@網域名稱，student123@nfu.edu.tw、user@gmail.com。正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
 
 ---
 
@@ -188,7 +186,7 @@ CREATE TABLE users (
 
 ```sql
 CREATE TABLE classrooms (
-    id INT PRIMARY KEY NOT NULL,
+    id VARCHAR(7) NOT NULL,
     name VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
 );
@@ -197,16 +195,40 @@ CREATE TABLE classrooms (
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |--------------|---------|---------|----|--------------|
 | `id`         |   string   | 教室編號 | 否 | 主鍵，符合教室編號格式(如下) |
-| `name`       | varchar | 教室名稱 | 否 | 長度3-30字（中文 英文 標點符號）如：BGC0614-數位學習實驗室 |
+| `name`       | string | 教室名稱 | 否 | 長度3-30字（中文 英文 標點符號）如：BGC0614-數位學習實驗室 |
 | `is_active`  | boolean | 是否啟用 | 否 | 預設為 TRUE |
-|capacity|  integer|容納人數|否 |數字，1~200|
+| `capacity` |  integer|容納人數|否 |數字，1~200|
 
 **格式說明：**
-- 教室編號⭢由"三個字母+四位數數字"組成，如:BGC0513（生物資訊實驗室）。  
-     正規表示式為： '^(BGC|BRA|BCB)\d{4}$'
+- 教室編號⭢由"三個字母+四位數數字"組成，如:BGC0513（生物資訊實驗室）。正規表示式為： '^(BGC|BRA|BCB)\d{4}$'
+
 ---
 
-### 3. `courses` – 課程資料表
+### 3. `time_periods` – 時段資料表
+
+```sql
+CREATE TABLE time_periods (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    label VARCHAR(50) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    CHECK (start_time < end_time)
+);
+```
+
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|--------------|---------|---------|----|--------------|
+| `id`         |   integer   | 時段編號 | 否 | 主鍵，數字，自動產生 |
+| `label`       | string | 時段標籤 | 否 | 長度2-5字中文 |
+| `start_time`  | time | 開始時間 | 否 | 符合時間格式(如下) |
+| `end_time`  | time | 結束時間 | 否 | 符合時間格式(如下)，必須晚於開始時間 |
+
+**格式說明：**
+- 時間格式⭢符合24小時制，如：08:00:00、13:00:00、18:00:00。正規表示式： '^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$'
+
+---
+
+### 4. `courses` – 課程資料表
 
 ```sql
 CREATE TABLE courses (
@@ -221,35 +243,11 @@ CREATE TABLE courses (
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|-------------|----------|--------------|--------------|
 | `id`            | integer       | 課程編號     | 否 | 主鍵，數字，自動產生 |
-| `name`          | varchar   | 課程名稱     | 否 | 長度3-10字中文須為"中文"課程名稱，如：數位系統導論。 |
-| `teacher`       | varchar   | 授課教師姓名 | 否 | 長度2-25字中文(如前)|
+| `name`          | string   | 課程名稱     | 否 | 長度3-10字中文須為"中文"課程名稱，如：數位系統導論。 |
+| `teacher`       | string   | 授課教師姓名 | 否 | 長度2-25字中文(如前)|
 | `academic_year` | integer   | 學年度       | 否 | 須符合實際"民國年"，長度3位數字，如：114。 |
 | `semester`      | integer   | 學期         | 否 | 僅限 1 和 2 上學期為1；下學期為 2。 |
 
----
-
-### 4. `time_periods` – 時段資料表
-
-```sql
-CREATE TABLE time_periods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    label VARCHAR(50) NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    CHECK (start_time < end_time)
-);
-```
-
-| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
-|----------|-------------|----------|--------|--------------|
-| `id`         | integer     | 時段編號 | 否 | 主鍵，數字，自動產生 |
-| `label`      | varchar  | 時段標籤 | 否 | 長度2-5字中文  |
-| `start_time` | time     | 開始時間 | 否 | 符合時間格式(如下) |
-| `end_time`   | time     | 結束時間 | 否 | 符合時間格式(如下)，必須晚於開始時間 |
-
-**格式說明：**
-- 時間格式⭢符合24小時制，如：08:00:00、13:00:00、18:00:00。  
-             正規表示式： '^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$'
 ---
 
 ### 5. `reservations` – 教室借用申請表
