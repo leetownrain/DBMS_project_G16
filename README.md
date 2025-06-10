@@ -357,17 +357,15 @@ INSERT INTO classroom (id, name, capacity, isActive) VALUES
 
 說明：將系上所管理的教室，新增資料到資料庫，包含教室 代號、教室名稱、容納人數與啟用狀態等資料。
 
-![example](Picture/one.png)
-
-### 2️⃣ 查詢 113-1 有哪些課程
+### 2️⃣ 查詢教室資料
 
 ```sql
-SELECT id, name, teacher
-FROM courses
-WHERE academic_year = '113' AND semester = '1';
+SELECT * FROM classroom;
 ```
 
-如果學期欄位使用「上、下」文字，請改為：
+![example](Picture/two.png)
+
+說明：教室管理畫面呈現，查詢每間教室的資訊，包括容納人數和啟用狀態。
 
 ```sql
 SELECT id, name, teacher
