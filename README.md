@@ -367,48 +367,34 @@ SELECT * FROM classroom;
 
 說明：教室管理畫面呈現，查詢每間教室的資訊，包括容納人數和啟用狀態。
 
-```sql
-SELECT id, name, teacher
-FROM courses
-WHERE academic_year = '113' AND semester = '上';
-```
-
-![example](Picture/two.png)
-
-### 3️⃣ 查詢 113-1 含「程式」的課程
+### 3️⃣ 新增時段資料
 
 ```sql
-SELECT id, name, teacher
-FROM courses
-WHERE academic_year = '113'
-  AND semester = '上'
-  AND name LIKE '%程式%';
+INSERT INTO time_period (id, label, start_time, end_time) VALUES
+(2, '第二節', '09:10:00', '10:00:00'),
+(3, '第三節', '10:10:00', '11:00:00'),
+(4, '第四節', '11:10:00', '12:00:00'),
+(6, '中午',   '12:00:00', '13:20:00'),
+(5, '第五節', '13:20:00', '14:10:00'),
+(7, '第六節', '14:20:00', '15:10:00'),
+(8, '第七節', '15:20:00', '16:10:00'),
+(9, '第八節', '16:20:00', '17:10:00'),
+(10, '第九節', '17:20:00', '18:10:00'),
+(11, '第十節', '18:30:00', '19:20:00'),
+(1, '第一節', '08:14:00', '09:00:00');
 ```
 
-說明：篩選學年度為 113、學期為「上」，且課程名稱包含「程式」的課程。
+說明：將虎尾科技大學規定的上課時段新增到資料庫，將時段編號、時段標籤、開始時間與結束時間等資料新增到時段資料表中。
 
-![example](Picture/three.png)
-
-### 4️⃣ 查詢 113 上學期程式課在那些時段上課
+### 4️⃣ 查詢時段資料
 
 ```sql
-SELECT 
-    c.name AS 課程名稱,
-    tp.label AS 時段標籤,
-    tp.start_time AS 開始時間,
-    tp.end_time AS 結束時間
-FROM courses c
-JOIN course_periods cp ON c.id = cp.course_id
-JOIN time_periods tp ON cp.time_period_id = tp.id
-WHERE c.academic_year = '113'
-  AND c.semester = '上'
-  AND c.name LIKE '%程式%';
+SELECT * FROM time_period;
 ```
 
-說明：從 `courses`、`course_periods` 和 `time_periods` 表連接查出所有 113-上含「程式」課程的時段安排。
+![example](Picture/查詢時段資料.jpg)
 
-![example](Picture/four.png)
-
+說明：時段管理畫面呈現，查詢每個時段的資訊，包括時段標籤、開始時間與結束時間。
 
 ---
 
