@@ -124,20 +124,6 @@
 
 ---
 
-## 👨‍💻 使用者管理系統（Auth Service）
-
-| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
-|----------|---------|-----------|----|--------------|
-| `id`     | integer | 使用者編號 | 否 | 主鍵、自動產生、UNIQUE |
-| `name`   | string | 使用者姓名 | 否 | 長度2-25字中文  正規表示式：'^[\u4e00-\u9fa5]{2,25}$' |
-| `email`  | string | 電子郵件   | 否 | 唯一性，符合電子郵件格式(如後) |
-| `password` | string | 帳號的密碼 | 否 | 長度８到２０且須包含至少一個英文字母和一個數字 |
-
-**格式說明：**  
-- 電子郵件（補充）正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
-
----
-
 ## 🏫 教室借用系統（Classroom Booking System）
 
 
@@ -503,7 +489,7 @@ WHERE
     rp.section_id = 6 AND
     r.status IN ('審核中', '通過');
 ```
-![example](查詢借用申請是否已有借用(有).jpg)
+![example](Picture/查詢借用申請是否已有借用(有).jpg)
 
 ```sql
 SELECT COUNT(*) AS reservation_count
@@ -515,11 +501,41 @@ WHERE
     rp.section_id = 3 AND
     r.status IN ('審核中', '通過');
 ```
-![example](查詢借用申請是否已有借用(無).jpg)
+![example](Picture/查詢借用申請是否已有借用(無).jpg)
 
 說明：利用教室、日期、節次和狀態是"審核中"與"通過"去搜尋，是否該時段被正常課程使用。
 
 ### 9️⃣ 對比是否有申請借用
+
+```sql
+SELECT COUNT() AS course_count
+FROM course_period cp
+JOIN course c ON cp.course_id = c.id
+WHERE
+    cp.classroom_id = 'BGC0501' AND
+    cp.section_id = 3 AND
+    c.academic_year = 113 AND
+    c.semester = 2 AND
+    cp.day_of_week = 3;
+```
+
+![example](Picture/查詢課程星期幾第幾節是否有空(有).jpg)
+
+```sql
+SELECT COUNT(*) AS course_count
+FROM course_period cp
+JOIN course c ON cp.course_id = c.id
+WHERE
+    cp.classroom_id = 'BGC0501' AND
+    cp.section_id = 5 AND
+    c.academic_year = 113 AND
+    c.semester = 2 AND
+    cp.day_of_week = 5;
+```
+
+![example](Picture/查詢課程星期幾第幾節是否有空(無).jpg)
+
+說明：查詢113學年第2學期（本學期）、BGC0501教室、星期幾和第幾節去搜尋，是否該時段被借用。
 
 ---
 
