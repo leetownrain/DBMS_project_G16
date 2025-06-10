@@ -127,7 +127,7 @@ CREATE TABLE users (
 
 ```sql
 CREATE TABLE classrooms (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
 );
