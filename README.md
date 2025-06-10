@@ -299,7 +299,7 @@ CREATE TABLE reservations_periods (
 
 ## 📌 關係整理與解釋
 
-![教室管理系統 ER 圖](Picture/rela_erd.png)
+![教室管理系統 ER 圖](Picture/rela_erd_2.png)
 
 - 一筆 **reservation**（借用）對應一間 **classroom**（教室）→ 多對一關係
 - 一門 **course**（課程）可對應多個 **time_period**（時段）→ 多對多關係，透過 `course_periods`
