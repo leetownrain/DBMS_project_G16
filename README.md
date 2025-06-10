@@ -493,6 +493,32 @@ ORDER BY
 
 ### 8️⃣ 查詢借用申請是否已有借用
 
+```sql
+SELECT COUNT(*) AS reservation_count
+FROM reservation r
+JOIN reservation_period rp ON r.id = rp.reservation_id
+WHERE
+    r.classroom_id = 'BGC0501' AND
+    r.date = '2025-06-14' AND
+    rp.section_id = 6 AND
+    r.status IN ('審核中', '通過');
+```
+![example](查詢借用申請是否已有借用(有).jpg)
+
+```sql
+SELECT COUNT(*) AS reservation_count
+FROM reservation r
+JOIN reservation_period rp ON r.id = rp.reservation_id
+WHERE
+    r.classroom_id = 'BGC0501' AND
+    r.date = '2025-06-10' AND
+    rp.section_id = 3 AND
+    r.status IN ('審核中', '通過');
+```
+![example](查詢借用申請是否已有借用(無).jpg)
+
+說明：利用教室、日期、節次和狀態是"審核中"與"通過"去搜尋，是否該時段被正常課程使用。
+
 ### 9️⃣ 對比是否有申請借用
 
 ---
