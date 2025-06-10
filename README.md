@@ -424,13 +424,72 @@ WHERE
     AND c.semester = 2;
 ```
 
-![example](Picture/查詢113-2 BGC0501的所有課程資料.jpg)
+![example](Picture/111.jpg)
+
+說明：教室使用狀況畫面呈現，查詢BGC0501教室每個課程的資訊，包括課程名稱、授課教師、星期幾與節次。
 
 ### 6️⃣ 新增課程資訊(1)
 
+```sql
+INSERT IGNORE INTO course (name, teacher, academic_year, semester) VALUES
+('科技英文', '蔡柏祥', 113, 2),
+('高等人工智慧', '鄭錦聰', 113, 2),
+('新一代web技術', '許乙清', 113, 2),
+('科技文件閱讀', '蔡柏祥', 113, 2);
+```
+
+說明：首先，將課程名稱、授課教師、學年度與學期等資料插入課程資料表中。
+
 ### 6️⃣ 新增課程資訊(2)
 
+```sql
+INSERT INTO course_period (course_id, classroom_id, section_id, day_of_week) VALUES
+((SELECT id FROM course WHERE name = '科技英文' AND teacher = '蔡柏祥' AND academic_year = 113 AND semester = 2), 'BGC0501', 1, 3),
+((SELECT id FROM course WHERE name = '高等人工智慧' AND teacher = '鄭錦聰' AND academic_year = 113 AND semester = 2), 'BGC0501', 2, 3),
+((SELECT id FROM course WHERE name = '新一代web技術' AND teacher = '許乙清' AND academic_year = 113 AND semester = 2), 'BGC0501', 2, 4),
+((SELECT id FROM course WHERE name = '科技文件閱讀' AND teacher = '蔡柏祥' AND academic_year = 113 AND semester = 2), 'BGC0501', 3, 2),
+((SELECT id FROM course WHERE name = '高等人工智慧' AND teacher = '鄭錦聰' AND academic_year = 113 AND semester = 2), 'BGC0501', 3, 3),
+((SELECT id FROM course WHERE name = '新一代web技術' AND teacher = '許乙清' AND academic_year = 113 AND semester = 2), 'BGC0501', 3, 4);
+```
+
+說明：最後，將課程使用的教室、時段與星期幾等資料插入課程時段資料表中。並透過子查詢來根據課程名稱、授課教師、學年度與學期選取對應的課程編號。
+
 ### 7️⃣ 查詢某時間區段的申請借用
+
+```sql
+SELECT
+    r.applicant_name,
+    r.reason,
+    r.status,
+    r.date,
+    CASE DAYOFWEEK(r.date)
+        WHEN 1 THEN '日'
+        WHEN 2 THEN '一'
+        WHEN 3 THEN '二'
+        WHEN 4 THEN '三'
+        WHEN 5 THEN '四'
+        WHEN 6 THEN '五'
+        WHEN 7 THEN '六'
+    END AS weekday,
+    tp.label AS section_label
+FROM
+    reservation r
+JOIN
+    reservation_period rp ON r.id = rp.reservation_id
+JOIN
+    time_period tp ON rp.section_id = tp.id
+WHERE
+    r.classroom_id = 'BGC0501'
+    AND r.date BETWEEN '2025-06-09' AND '2025-06-15'
+ORDER BY
+    r.date ASC,
+    r.id ASC,
+    tp.start_time ASC;
+```
+
+![example](Picture/222.jpg)
+
+說明：查詢2025-06-09至2025-06-15期間，BGC0501教室的借用裝況，供教室使用狀況畫面呈現。
 
 ### 8️⃣ 查詢借用申請是否已有借用
 
