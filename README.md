@@ -113,6 +113,32 @@
 
 ---
 
+## 📌 關係整理與解釋
+
+![教室管理系統 ER 圖](Picture/rela_erd_2.png)
+
+- 一筆 **reservation**（借用）對應一間 **classroom**（教室）→ 多對一關係
+- 一門 **course**（課程）可對應多個 **time_period**（時段）→ 多對多關係，透過 `course_periods`
+- 一筆 **reservation** 可對應多個 **time_period** → 多對多關係，透過 `reservations_periods`
+- **course_periods** 額外指定該時段使用的 **classroom**（教室） → 多對一關係
+
+---
+
+## 👨‍💻 使用者管理系統（Auth Service）
+
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|---------|-----------|----|--------------|
+| `id`     |   integer   | 使用者編號 | 否 | 主鍵、自動產生、UNIQUE |
+| `name`   | string | 使用者姓名 | 否 | 長度2-25字中文  正規表示式：'^[\u4e00-\u9fa5]{2,25}$' |
+| `email`  | string | 電子郵件   | 否 | 唯一性，符合電子郵件格式(如後) |
+| `password` | string | 帳號的密碼 | 否 | 長度８到２０且須包含至少一個英文字母和一個數字 |
+
+**格式說明：**  
+- 電子郵件（補充）
+        正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
+
+---
+
 ## 🏫 教室借用系統（Classroom Booking System）
 
 
@@ -311,17 +337,6 @@ CREATE TABLE reservations_periods (
 | `id`              | integer | 編號        | 否 | 主鍵，自動產生 |
 | `reservation_id`  | integer | 借用申請 ID | 否 | 外鍵，reservation_id → reservations(id) |
 | `time_period_id`  | integer | 時段 ID     | 否 | 外鍵，time_period_id → time_periods(id) |
-
----
-
-## 📌 關係整理與解釋
-
-![教室管理系統 ER 圖](Picture/rela_erd_2.png)
-
-- 一筆 **reservation**（借用）對應一間 **classroom**（教室）→ 多對一關係
-- 一門 **course**（課程）可對應多個 **time_period**（時段）→ 多對多關係，透過 `course_periods`
-- 一筆 **reservation** 可對應多個 **time_period** → 多對多關係，透過 `reservations_periods`
-- **course_periods** 額外指定該時段使用的 **classroom**（教室） → 多對一關係
 
 ---
 
