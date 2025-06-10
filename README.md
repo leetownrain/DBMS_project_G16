@@ -86,7 +86,19 @@
 
 ### 🔷 一、實體資料表（Entities）
 
-### 1. `users` – 使用者資料表
+### 1. `Auth Service` – 身分驗證系統
+
+| 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
+|----------|---------|-----------|----|--------------|
+| `id`     | integer   | 使用者編號 | 否 | 主鍵、自動產生、UNIQUE |
+| `name`   | string | 使用者姓名 | 否 | 長度2-25字中文，正規表示式為 '^[\u4e00-\u9fa5]{2,25}$' |
+| `email`  | string | 電子郵件   | 否 | 唯一性，須符合電子郵件標準格式 |
+| `role`   | string | 帳號的密碼 | 否 | 長度８到２０且須包含至少一個英文字母和一個數字 |
+
+**格式說明：** 
+- 電子郵件（補充）： 正規表示式為 '^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$'
+
+### 2. `users` – 使用者資料表
 
 ```sql
 CREATE TABLE users (
@@ -126,7 +138,7 @@ CREATE TABLE users (
 
 ---
 
-### 2. `classrooms` – 教室資料表
+### 3. `classrooms` – 教室資料表
 
 ```sql
 CREATE TABLE classrooms (
@@ -147,7 +159,7 @@ CREATE TABLE classrooms (
      正規表示式為： '^(BGC|BRA|BCB)\d{4}$'
 ---
 
-### 3. `courses` – 課程資料表
+### 4. `courses` – 課程資料表
 
 ```sql
 CREATE TABLE courses (
@@ -169,7 +181,7 @@ CREATE TABLE courses (
 
 
 
-### 4. `time_periods` – 時段資料表
+### 5. `time_periods` – 時段資料表
 
 ```sql
 CREATE TABLE time_periods (
@@ -193,7 +205,7 @@ CREATE TABLE time_periods (
 - 結束時間: 符合24小時制，如: 08:00、13:00、18:00。
 ---
 
-### 5. `reservations` – 教室借用申請表
+### 6. `reservations` – 教室借用申請表
 
 ```sql
 CREATE TABLE reservations (
