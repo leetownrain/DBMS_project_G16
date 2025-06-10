@@ -186,7 +186,7 @@ CREATE TABLE users (
 
 ```sql
 CREATE TABLE classrooms (
-    id VARCHAR(7) NOT NULL,
+    id VARCHAR(7) PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
 );
