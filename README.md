@@ -285,7 +285,7 @@ CREATE TABLE reservations (
 
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
----  
+
 **格式說明：**
 - 日期格式⭢符合當前日期或是未來日期，如: 2025-06-20、2026-06-01。[0-9]{4}-[0-9]{2}-[0-9]{2}
 - 審查狀態⭢只允許以下三種狀態：待辦中(pending)、已許可(approved)、被拒絕(rejected)
