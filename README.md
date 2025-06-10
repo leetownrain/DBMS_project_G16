@@ -280,10 +280,6 @@ CREATE TABLE reservations_periods (
 | `reservation_id`  | integer | 借用申請 ID | 否 | 外鍵，reservation_id → reservations(id) |
 | `time_period_id`  | integer | 時段 ID     | 否 | 外鍵，time_period_id → time_periods(id) |
 
-**外鍵說明：**
-- `reservation_id` → `reservations(id)`  
-- `time_period_id` → `time_periods(id)`
-
 ---
 
 ## 📌 關係整理與解釋
