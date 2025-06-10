@@ -242,7 +242,7 @@ CREATE TABLE courses (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|-------------|----------|--------------|--------------|
-| `id`            | integer       | 課程編號     | 否 | 主鍵，數字，自動產生 |
+| `id`            | integer  | 課程編號     | 否 | 主鍵，數字，自動產生 |
 | `name`          | string   | 課程名稱     | 否 | 長度3-10字中文須為"中文"課程名稱，如：數位系統導論。 |
 | `teacher`       | string   | 授課教師姓名 | 否 | 長度2-25字中文(如前)|
 | `academic_year` | integer   | 學年度       | 否 | 須符合實際"民國年"，長度3位數字，如：114。 |
@@ -271,17 +271,17 @@ CREATE TABLE reservations (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|--------------|----------|--------------|--------------|
-| `id`              | int           | 借用紀錄編號 | 否 | 主鍵，數字，自動產生 |
+| `id`              | integer       | 借用紀錄編號 | 否 | 主鍵，數字，自動產生 |
 | `date`            | date          | 借用日期 | 否 | 符合日期格式(如後)，需是當前日期或未來日期 |
 | `reason`          | text          | 借用原因 | 否 | 不能超過50個字 |
-| `status`          | varchar       | 借用狀態 | 否 | NOT NULL, 限定值 |
-| `unit`            | varchar       | 申請單位 | 否 | 符合"虎科"實際存在單位 |
-| `teacher`         | varchar       | 指導老師 | 否 | 長度2-25字中文 |
-| `applicant_id`    | int           | 申請人 ID | 否 | 符合學號或員工編號格式(如前) |
-| `applicant_name`  | varchar       | 申請人姓名 | 否 | 長度2-25字中文(如前) |
-| `applicant_email` | varchar       | 申請人信箱 | 否 | 須符合電子郵件標準格式(如前) |
-| `applicant_phone` | varchar       | 申請人電話 | 否 | 僅允許 09 + 8 位數字 |
-| `classroom_id`    | int           | 教室 ID | 否 | 外鍵 → classrooms(id) |
+| `status`          | string        | 借用狀態 | 否 | NOT NULL, 限定值 |
+| `unit`            | string        | 申請單位 | 否 | 符合"虎科"實際存在單位 |
+| `teacher`         | string        | 指導老師 | 否 | 長度2-25字中文 |
+| `applicant_id`    | integer       | 申請人 ID | 否 | 符合學號或員工編號格式(如前) |
+| `applicant_name`  | string        | 申請人姓名 | 否 | 長度2-25字中文(如前) |
+| `applicant_email` | string        | 申請人信箱 | 否 | 須符合電子郵件標準格式(如前) |
+| `applicant_phone` | integer       | 申請人電話 | 否 | 僅允許 09 + 8 位數字 |
+| `classroom_id`    | string        | 教室 ID | 否 | 外鍵 → classrooms(id) |
 
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
