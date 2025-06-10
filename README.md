@@ -258,11 +258,8 @@ CREATE TABLE course_periods (
 | `course_id`     | integer | 課程 ID | 否 | 外鍵，course_id → courses(id) |
 | `time_period_id`| integer | 時段 ID | 否 | 外鍵，time_period_id → time_periods(id) |
 | `classroom_id`  | integer | 教室 ID | 否 | 外鍵，classroom_id → classrooms(id) |
+| `day_of_week`  | integer |  星期幾 | 否 | 僅限0~6，0代表星期一、6代表星期天 |
 
-**外鍵說明：**
-- `course_id` → `courses(id)`  
-- `time_period_id` → `time_periods(id)`  
-- `classroom_id` → `classrooms(id)`
 ---
 
 ### 2. `reservations_periods` – 借用申請 × 時段 的中介表
