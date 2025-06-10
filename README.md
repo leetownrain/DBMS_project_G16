@@ -539,7 +539,7 @@ WHERE
 
 ---
 
-## 🔐 身份驗證系統（Auth Service）
+## 🔐 使用者系統（Auth Service）
 
 ### 🔷 一、實體資料表（Entities）
 
