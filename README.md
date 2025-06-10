@@ -396,6 +396,46 @@ SELECT * FROM time_period;
 
 說明：時段管理畫面呈現，查詢每個時段的資訊，包括時段標籤、開始時間與結束時間。
 
+### 5️⃣ 查看113-2 BGC0501的課程資訊
+
+```sql
+SELECT
+    c.name AS course_name,
+    c.teacher,
+    CASE cp.day_of_week
+        WHEN 0 THEN '日'
+        WHEN 1 THEN '一'
+        WHEN 2 THEN '二'
+        WHEN 3 THEN '三'
+        WHEN 4 THEN '四'
+        WHEN 5 THEN '五'
+        WHEN 6 THEN '六'
+    END AS weekday,
+    s.label AS section
+FROM
+    course_period cp
+JOIN
+    course c ON cp.course_id = c.id
+JOIN
+    time_period s ON cp.section_id = s.id
+WHERE
+    cp.classroom_id = 'BGC0501' 
+    AND c.academic_year = 113
+    AND c.semester = 2;
+```
+
+![example](Picture/查詢時段資料.jpg)
+
+### 6️⃣ 新增課程資訊(1)
+
+### 6️⃣ 新增課程資訊(2)
+
+### 7️⃣ 查詢某時間區段的申請借用
+
+### 8️⃣ 查詢借用申請是否已有借用
+
+### 9️⃣ 對比是否有申請借用
+
 ---
 
 ## 🔐 身份驗證系統（Auth Service）
