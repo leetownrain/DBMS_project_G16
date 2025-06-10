@@ -363,7 +363,7 @@ INSERT INTO classroom (id, name, capacity, isActive) VALUES
 SELECT * FROM classroom;
 ```
 
-![example](Picture/two.png)
+![example](Picture/查詢教室資料.jpg)
 
 說明：教室管理畫面呈現，查詢每間教室的資訊，包括容納人數和啟用狀態。
 
