@@ -313,7 +313,7 @@ CREATE TABLE course_periods (
 | `id`            | integer | 課程編號    | 否 | 主鍵，數字，自動產生 |
 | `course_id`     | integer | 課程 ID | 否 | 外鍵，course_id → courses(id) |
 | `time_period_id`| integer | 時段 ID | 否 | 外鍵，time_period_id → time_periods(id) |
-| `classroom_id`  | integer | 教室 ID | 否 | 外鍵，classroom_id → classrooms(id) |
+| `classroom_id`  | string  | 教室 ID | 否 | 外鍵，classroom_id → classrooms(id) |
 | `day_of_week`  | integer |  星期幾 | 否 | 僅限0~6，0代表星期一、6代表星期天 |
 
 ---
