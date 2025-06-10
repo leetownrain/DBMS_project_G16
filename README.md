@@ -214,29 +214,21 @@ CREATE TABLE reservations (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|--------------|----------|--------------|--------------|
-| `id`              | int           | 借用紀錄編號 | 否 | 主鍵，自動產生 |
-| `date`            | date          | 借用日期 | 否 | NOT NULL |
-| `reason`          | text          | 借用原因 | 否 | NOT NULL |
+| `id`              | int           | 借用紀錄編號 | 否 | 主鍵，數字，自動產生 |
+| `date`            | date          | 借用日期 | 否 | 符合日期格式(如後)，需是當前日期或未來日期 |
+| `reason`          | text          | 借用原因 | 否 | 不能超過50個字 |
 | `status`          | varchar       | 借用狀態 | 否 | NOT NULL, 限定值 |
-| `unit`            | varchar       | 申請單位 | 否 | NOT NULL |
-| `teacher`         | varchar       | 指導老師 | 否 | NOT NULL |
-| `applicant_id`    | int           | 申請人 ID | 否 | NOT NULL |
-| `applicant_name`  | varchar       | 申請人姓名 | 否 | NOT NULL |
-| `applicant_email` | varchar       | 申請人信箱 | 否 | NOT NULL, Email 格式 |
-| `applicant_phone` | varchar       | 申請人電話 | 否 | NOT NULL |
-| `classroom_id`    | int           | 教室 ID | 否 | 外鍵 |
+| `unit`            | varchar       | 申請單位 | 否 | 符合"虎科"實際存在單位 |
+| `teacher`         | varchar       | 指導老師 | 否 | 長度2-25字中文 |
+| `applicant_id`    | int           | 申請人 ID | 否 | 符合學號或員工編號格式(如前) |
+| `applicant_name`  | varchar       | 申請人姓名 | 否 | 長度2-25字中文(如前) |
+| `applicant_email` | varchar       | 申請人信箱 | 否 | 須符合電子郵件標準格式(如前) |
+| `applicant_phone` | varchar       | 申請人電話 | 否 | 僅允許 09 + 8 位數字 |
+| `classroom_id`    | int           | 教室 ID | 否 | 外鍵 → classrooms(id) |
 
 **外鍵說明：**
 - `classroom_id` → `classrooms(id)`
 
-**格式說明：**
-- 借用日期: 符合當前日期或是未來日期，如: 2025/06/20、2026/06/01。
-- 申請單位: 符合"虎科"實際存在單位，如:班級、社團、系學會，四資工二乙、熱舞社、資工系學會。
-- 指導老師: 須為"中文"名字，如:鄭錦聰、江季翰。
-- 申請人姓名: 須為"中文"名字，如:陳大餅、張中筒。
-- 申請人信箱: 須符合電子郵件標準格式，如:使用者名稱@網域名稱，student123@nfu.edu.tw、user@gmail.com。
-- 申請人電話: 須為"臺灣"行動電話號碼格式，如:0912345678。
----
 
 ### 🔶 二、關係資料表（Relationships）
 
@@ -256,10 +248,10 @@ CREATE TABLE course_periods (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|--------------|----------|---------|----------|
-| `id`            | INTEGER | 編號    | 否 | 主鍵，自動產生 |
-| `course_id`     | INTEGER | 課程 ID | 否 | NOT NULL, 外鍵 |
-| `time_period_id`| INTEGER | 時段 ID | 否 | NOT NULL, 外鍵 |
-| `classroom_id`  | INTEGER | 教室 ID | 否 | NOT NULL, 外鍵 |
+| `id`            | integer | 課程編號    | 否 | 主鍵，數字，自動產生 |
+| `course_id`     | integer | 課程 ID | 否 | 外鍵，course_id → courses(id) |
+| `time_period_id`| integer | 時段 ID | 否 | 外鍵，time_period_id → time_periods(id) |
+| `classroom_id`  | integer | 教室 ID | 否 | 外鍵，classroom_id → classrooms(id) |
 
 **外鍵說明：**
 - `course_id` → `courses(id)`  
@@ -281,9 +273,9 @@ CREATE TABLE reservations_periods (
 
 | 欄位名稱 | 資料型別 | 中文說明 | 是否為空值 | 完整性限制 |
 |----------|--------------|----------|-----------|--------------|
-| `id`              | int | 編號        | 否 | 主鍵，自動產生 |
-| `reservation_id`  | int | 借用申請 ID | 否 | NOT NULL, 外鍵 |
-| `time_period_id`  | int | 時段 ID     | 否 | NOT NULL, 外鍵 |
+| `id`              | integer | 編號        | 否 | 主鍵，自動產生 |
+| `reservation_id`  | integer | 借用申請 ID | 否 | 外鍵，reservation_id → reservations(id) |
+| `time_period_id`  | integer | 時段 ID     | 否 | 外鍵，time_period_id → time_periods(id) |
 
 **外鍵說明：**
 - `reservation_id` → `reservations(id)`  
