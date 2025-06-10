@@ -262,7 +262,7 @@ CREATE TABLE course_periods (
 | `id`            | INTEGER | 編號    | 否 | 主鍵，自動產生 |
 | `course_id`     | INTEGER | 課程 ID | 否 | NOT NULL, 外鍵 |
 | `time_period_id`| INTEGER | 時段 ID | 否 | NOT NULL, 外鍵 |
-| `classroom_id`  | INTEGER | 教室 ID | 否 | 可為空, 外鍵 |
+| `classroom_id`  | INTEGER | 教室 ID | 否 | NOT NULL, 外鍵 |
 
 **外鍵說明：**
 - `course_id` → `courses(id)`  
