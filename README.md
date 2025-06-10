@@ -343,14 +343,19 @@ CREATE TABLE reservations_periods (
 本文件整理了教室管理系統（G16）常見查詢需求與對應的 SQL 語法，適用於 MariaDB。
 
 
-### 1️⃣ 查詢教室有哪些
+### 1️⃣ 新增教室資料
 
 ```sql
-SELECT id, name, is_active
-FROM classrooms;
+INSERT INTO classroom (id, name, capacity, isActive) VALUES
+('BGC0614', 'BGC0614-數位學習實驗室', 30, TRUE),
+('BGC0513', 'BGC0513-生物資訊實驗室', 50, TRUE),
+('BGC0601', 'BGC0601-IC設計實驗室', 60, TRUE),
+('BRA0102', 'BRA0102-AI機器人實驗室', 40, TRUE),
+('BRA0201', 'BRA0201-AI數位人實驗室', 30, TRUE),
+('BGC0501', 'BGC0501-基本電學與護照實驗室', 50, TRUE);
 ```
 
-說明：列出所有教室名稱與啟用狀態。
+說明：將系上所管理的教室，新增資料到資料庫，包含教室 代號、教室名稱、容納人數與啟用狀態等資料。
 
 ![example](Picture/one.png)
 
