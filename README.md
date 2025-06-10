@@ -141,7 +141,7 @@ CREATE TABLE classrooms (
 | `id`         |   string   | 教室編號 | 否 | 主鍵，符合教室編號格式(如下) |
 | `name`       | varchar | 教室名稱 | 否 | 長度3-30字（中文 英文 標點符號）如：BGC0614-數位學習實驗室 |
 | `is_active`  | boolean | 是否啟用 | 否 | 預設為 TRUE |
-|capacity|  integer|容納人數|數字，1~200|
+|capacity|  integer|容納人數|否 |數字，1~200|
 
 **格式說明：**
 - 教室編號⭢由"三個字母+四位數數字"組成，如:BGC0513（生物資訊實驗室）。  
