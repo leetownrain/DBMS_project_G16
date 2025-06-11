@@ -132,11 +132,12 @@
 ### 1. `users` – 使用者資料表
 
 ```sql
-CREATE TABLE users (
-    id VARCHAR(7) NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user'))
+CREATE TABLE user (
+    id VARCHAR(8) PRIMARY KEY,
+    username VARCHAR(25) NOT NULL,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    role ENUM('user', 'admin') NOT NULL,
+    is_psd_init BOOLEAN DEFAULT FALSE
 );
 ```
 
@@ -170,10 +171,11 @@ CREATE TABLE users (
 ### 2. `classrooms` – 教室資料表
 
 ```sql
-CREATE TABLE classrooms (
-    id VARCHAR(7) PRIMARY KEY NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE
+CREATE TABLE classroom (
+    id VARCHAR(7) PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+    capacity INT DEFAULT 60,
+    isActive BOOLEAN DEFAULT TRUE
 );
 ```
 
@@ -192,9 +194,9 @@ CREATE TABLE classrooms (
 ### 3. `time_periods` – 時段資料表
 
 ```sql
-CREATE TABLE time_periods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    label VARCHAR(50) NOT NULL,
+CREATE TABLE time_period (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    label VARCHAR(5) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     CHECK (start_time < end_time)
@@ -216,12 +218,12 @@ CREATE TABLE time_periods (
 ### 4. `courses` – 課程資料表
 
 ```sql
-CREATE TABLE courses (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
-    teacher VARCHAR(100) NOT NULL,
-    academic_year VARCHAR(20) NOT NULL,
-    semester VARCHAR(10) NOT NULL CHECK (semester IN ('上', '下'))
+CREATE TABLE course (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL,
+    teacher VARCHAR(25) NOT NULL,
+    academic_year INT NOT NULL,
+    semester INT NOT NULL
 );
 ```
 
@@ -238,19 +240,19 @@ CREATE TABLE courses (
 ### 5. `reservations` – 教室借用申請表
 
 ```sql
-CREATE TABLE reservations (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE reservation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    applicant_id VARCHAR(8) NOT NULL,
+    applicant_name VARCHAR(25) NOT NULL,
+    applicant_email VARCHAR(50) NOT NULL,
+    applicant_phone VARCHAR(10) NOT NULL,
+    unit VARCHAR(20) NOT NULL,
+    teacher VARCHAR(25) NOT NULL,
+    reason VARCHAR(50) NOT NULL,
+    status ENUM('審核中', '通過', '不通過', '已取消') NOT NULL DEFAULT '審核中',
     date DATE NOT NULL,
-    reason TEXT NOT NULL,
-    status VARCHAR(50) NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),
-    unit VARCHAR(100) NOT NULL,
-    teacher VARCHAR(100) NOT NULL,
-    applicant_id INT NOT NULL,
-    applicant_name VARCHAR(100) NOT NULL,
-    applicant_email VARCHAR(100) NOT NULL,
-    applicant_phone VARCHAR(50) NOT NULL,
-    classroom_id INT NOT NULL,
-    FOREIGN KEY (classroom_id) REFERENCES classrooms(id)
+    classroom_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (classroom_id) REFERENCES classroom(id)
 );
 ```
 
@@ -282,14 +284,15 @@ CREATE TABLE reservations (
 ### 1. `course_periods` – 課程 × 時段 × 教室 的中介表
 
 ```sql
-CREATE TABLE course_periods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE course_period (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
-    time_period_id INT NOT NULL,
-    classroom_id INT,
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
-    FOREIGN KEY (time_period_id) REFERENCES time_periods(id) ON DELETE CASCADE,
-    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE SET NULL
+    classroom_id VARCHAR(7) NOT NULL,
+    section_id INT NOT NULL,
+    day_of_week ENUM('0', '1', '2', '3', '4', '5', '6') NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (classroom_id) REFERENCES classroom(id),
+    FOREIGN KEY (section_id) REFERENCES time_period(id)
 );
 ```
 
@@ -306,12 +309,12 @@ CREATE TABLE course_periods (
 ### 2. `reservations_periods` – 借用申請 × 時段 的中介表
 
 ```sql
-CREATE TABLE reservations_periods (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE reservation_period (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     reservation_id INT NOT NULL,
-    time_period_id INT NOT NULL,
-    FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
-    FOREIGN KEY (time_period_id) REFERENCES time_periods(id) ON DELETE CASCADE
+    section_id INT NOT NULL,
+    FOREIGN KEY (reservation_id) REFERENCES reservation(id),
+    FOREIGN KEY (section_id) REFERENCES time_period(id)
 );
 ```
 
