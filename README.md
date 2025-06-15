@@ -29,7 +29,7 @@
 
 ### 期末簡報：🔗 [前往簡報連結](https://www.canva.com/design/DAGpMgow0HM/g3DIhVA1uYEhztwP-vw_2Q/view?utm_content=DAGpMgow0HM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h9e53976d3b)
 
-### 期末報告：🔗 [前往期末完整報告](Picture/教室管理系統 G16.pdf)
+### 期末報告：🔗 ![前往期末完整報告](Picture/教室管理系統 G16.pdf)
 
 ---
 
