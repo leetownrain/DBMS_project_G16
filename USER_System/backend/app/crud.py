@@ -3,14 +3,22 @@ from app.models import User
 from app.auth import hash_password, verify_password
 
 def create_user(session: Session, user: User):
-    user.password = hash_password(user.password)
     existing_user = session.query(User).filter(User.email == user.email).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        return {
+            "result": False,
+            "message": "Email already registered"
+        }
+    
+    user.password = hash_password(user.password)
     session.add(user)
     session.commit()
     session.refresh(user)
-    return user
+    
+    return {
+        "result": True,
+        "message": "User created successfully"
+    }
 
 def authenticate_user(session: Session, email: str, password: str):
     user = session.exec(select(User).where(User.email == email)).first()
